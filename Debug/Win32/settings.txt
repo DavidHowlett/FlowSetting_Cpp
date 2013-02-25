@@ -1,0 +1,60 @@
+4000000 		safe point 
+100000 		near point 
+4200000 	motor gone too far point 
+1400000 	motor speed 
+50000 	motor acceleration 
+1000 		maximum iterations in setting (should be large)
+1.000000 	gas factor (not currently implemented)
+2.000000 	target pressure (not currently implemented)
+1.000000 	minimum pressure (not currently implemented)
+3.000000 	maximum pressure (not currently implemented)
+0.600000 	target pressure adjusted flow rate 
+0.010000 	target fractional error 
+8 		number of the calibration file to be used 
+8 		number of the most recently written calibration file 
+800.000000 	time for stabilization
+0.500000 	fraction to final position to move on each iteration 
+3000.000000 	maximum torque
+1 		number of the algorithm used for setting flows
+5000 		amount to move on each iteration of calibration data generation
+1 		debugging (set to 1 for debugging and 0 for normal use)
+0.025000 		maximum bounce expected measured in SLPM per Bar
+400000 		distance to back off, this is used when the motor backs off to get a measurement includeing the bounce effect
+F 		release valve channel
+
+20 		motor port (the port number should be set to -1 to signal when the device does not exist)
+21 		weeder io port (the port number should be set to -1 to signal when the device does not exist) 
+-1 		pressure transducer port (the port number should be set to -1 to signal when the device does not exist)
+
+18 		flowmeter 1 port (the port number should be set to -1 to signal when the device does not exist)
+E 		weeder io channel for flowmeter 1(should be a capital letter)
+20.000000 		flowmeter 1 maximum flow (slpm)
+1 		flowmeter 1 units correction (1 for litres per min 1000 for ml)
+
+19 		flowmeter 2 port (the port number should be set to -1 to signal when the device does not exist)
+D 		weeder io channel for flowmeter 2(should be a capital letter)
+15.000000 		flowmeter 2 maximum flow (slpm)
+1000 		flowmeter 2 units correction (1 for litres per min 1000 for ml)
+
+15 		flowmeter 3 port (the port number should be set to -1 to signal when the device does not exist)
+C 		weeder io channel for flowmeter 3(should be a capital letter)
+0.250000 		flowmeter 3 maximum flow (slpm) 
+1000 		flowmeter 3 units correction (1 for litres per min 1000 for ml)
+
+-1 		flowmeter 4 port (the port number should be set to -1 to signal when the device does not exist)
+F 		weeder io channel for flowmeter 4(should be a capital letter)
+100.000000 		flowmeter 4 maximum flow (slpm)
+1 		flowmeter 4 units correction (1 for litres per min 1000 for ml)
+
+-1 		flowmeter 5 port (the port number should be set to -1 to signal when the device does not exist)
+G 		weeder io channel for flowmeter 5(should be a capital letter)
+100.000000 		flowmeter 5 maximum flow (slpm)
+1 		flowmeter 5 units correction (1 for litres per min 1000 for ml) 
+
+1234567890 	don't change me, I test if settings are read correctly
+
+******* end of data ******* 
+
+ the numbers in this file can be modified by the end user, you probably wish to back it up first though. 
+Also you can change the text after 'end of data' how ever you wish and it will be ignored by the program but
+ if you change any of the text before the end of data marker the program will break
