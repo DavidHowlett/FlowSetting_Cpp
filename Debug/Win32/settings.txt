@@ -10,8 +10,8 @@
 3.000000 	maximum pressure (not currently implemented)
 0.600000 	target pressure adjusted flow rate 
 0.010000 	target fractional error 
-8 		number of the calibration file to be used 
-8 		number of the most recently written calibration file 
+9 		number of the calibration file to be used 
+9 		number of the most recently written calibration file 
 800.000000 	time for stabilization
 0.500000 	fraction to final position to move on each iteration 
 3000.000000 	maximum torque

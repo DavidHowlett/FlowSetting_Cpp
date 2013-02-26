@@ -21,7 +21,7 @@ motor::motor()
 {
 
 }
-motor::setup(motor1port)
+int motor::setup(int motor1port)
 {
 	char orig[100];
 	sprintf(orig, "\\\\.\\COM%d",motor1port);
@@ -104,7 +104,7 @@ motor::go_to(	int speed_int,
 	write(speed_str);
 	write(acceleration_str);
 	write(position_str);
-	write(",^,"); // string should now look like: S=1000000,A=5000,P=3000000,^,
+	write(",^,"); // string should now look like: S=500000,A=5000,P=1000000,^,
 	wait_for_response();
 	camp=position_int;
 	return(0);
