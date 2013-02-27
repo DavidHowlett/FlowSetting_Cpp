@@ -98,9 +98,9 @@
 				<DependentOn>RS232Primitive.h</DependentOn>
 				<BuildOrder>8</BuildOrder>
 			</CppCompile>
-			<CppCompile Include="weederio.cpp">
-				<DependentOn>weederio.h</DependentOn>
-				<BuildOrder>7</BuildOrder>
+			<CppCompile Include="Weederio.cpp">
+				<DependentOn>Weederio.h</DependentOn>
+				<BuildOrder>9</BuildOrder>
 			</CppCompile>
 			<BuildConfiguration Include="Release">
 				<Key>Cfg_2</Key>

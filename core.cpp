@@ -1,20 +1,17 @@
+// Environment Resources ----------------------------------------------------
 #include <iostream>
 #include <Classes.hpp>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string>
-//******************************************************************************
-#ifndef Motor
+// My Header Files ----------------------------------------------------------
 #include "Motor.h"
-#endif
-
-#ifndef flowmaster
 #include "flowmaster.h"
-#endif
-#include "hidden.h"       // this contains documentation
-
-using namespace std;
-//settings**********************************************************************
+#include "Hidden.h"       // this contains documentation
+// My Classes ---------------------------------------------------------------
+Motor motor_instance;
+flowmaster flowmaster_instance;
+// Settings -----------------------------------------------------------------
 // if settings are working correctly all the below values will be overwritten in setup()
 int spoint=0; // this is the safe point near the jig
 int npoint=0; // this is an alowed near point to the origin where it does not touch the stopper
@@ -73,8 +70,7 @@ bool run_again=true;
 const int max_table_size=10000;        // I can't use a varable as this value is needed at compile time
 int motor_position_table[max_table_size];
 float pafr_table[max_table_size]; // pressure is measured in bar, pafr = presure ajusted flow rate measured in ml/bar/min
-Motor motor_instance;
-flowmaster flowmaster_instance;
+
 //function declarations*********************************************************
 int setup(); // this should only be called at startup and should contain everything needed to initialise the system
 int user_interation_and_action(); // this asks the user what to do next and calls the apropriate code

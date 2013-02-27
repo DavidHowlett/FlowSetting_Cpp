@@ -1,18 +1,6 @@
-#ifndef motor
-#include "motor.h"
-#endif
-
-#ifndef flowmaster
-#include "flowmaster.h"
-#endif
-///////////////////////////////
 #include <stdio.h>
 #include <iostream.h>
 #include "flowmaster.h"
-
-#pragma package(smart_init)
-weederio weederio_instance;
-
 flowmaster::flowmaster()
 {
 	fminuse=0;
@@ -58,7 +46,7 @@ int flowmaster::setup(int flowmeter1port, char flowmeter1channel,float local_flo
 
 	if (weederio1port>-0.5)
 	{
-		weederio_instance.setup(weederio1port);//COM port
+		weederio_instance.Setup(weederio1port);//COM port
     lockdown();
 		io1present=1;
 	}else{
@@ -140,13 +128,13 @@ int flowmaster::test()
 }
 int flowmaster::reset()// this closes all valves except what is needed  for the largest flowmeter
 {
-	weederio_instance.close(local_release_valve_channel);// this closes tha relece valve so the pressure can build up
+	weederio_instance.Close(local_release_valve_channel);// this closes tha relece valve so the pressure can build up
 	for(int i=1;i<6;i++)
 	{
-		if(fmpresent[i]&&(weederio_instance.request_status(flowmeterchannel[i]))) // this should only close the valves that exist and are open to save time
-			weederio_instance.close(flowmeterchannel[i]);
+		if(fmpresent[i]&&(weederio_instance.RequestStatus(flowmeterchannel[i]))) // this should only close the valves that exist and are open to save time
+			weederio_instance.Close(flowmeterchannel[i]);
 	}
-	weederio_instance.open(flowmeterchannel[size_order[0]]);// this opens the valve for the biggest flowmeter
+	weederio_instance.Open(flowmeterchannel[size_order[0]]);// this opens the valve for the biggest flowmeter
 	fminuse=size_order[0];// this states that the flowmeter in use is the largest
 	printf("current massflow: %f changed to %f SLPM flowmeter\n",quick_massflow(),flowmetermaxflow[size_order[0]]);
 	return(0);
@@ -170,8 +158,8 @@ int flowmaster::reconsider_valves()// this function tries to find the right valv
 				float massflow=quick_massflow();
 				if(massflow<=(0.95*flowmetermaxflow[size_order[i+1]]))
 				{
-					weederio_instance.open(flowmeterchannel[size_order[i+1]]);
-					weederio_instance.close(flowmeterchannel[size_order[i]]);
+					weederio_instance.Open(flowmeterchannel[size_order[i+1]]);
+					weederio_instance.Close(flowmeterchannel[size_order[i]]);
 					printf("current massflow: %f changed to %f SLPM flowmeter\n",massflow,flowmetermaxflow[size_order[i+1]]);
 					fminuse=size_order[i+1];
 					Sleep(local_time_for_stabilization*2);
@@ -187,12 +175,12 @@ int flowmaster::lockdown() // this closes all valves and renders the system usel
 	for(int i=1;i<6;i++)
 	{
 		if(fmpresent[i]) // this should only close the valves that exist to save time
-			weederio_instance.close(flowmeterchannel[i]);
+			weederio_instance.Close(flowmeterchannel[i]);
 	}
 	//printf("current massflow: %f changed to no flowmeter\n",quick_massflow());
 	fminuse=0; //this value means that no flowmeter is in use
 	// it matters that the flowmeter valves are closed before the pressure releace valve is opened or you can blow your flowmeters
-	weederio_instance.open(local_release_valve_channel);// this opens the releace valve
+	weederio_instance.Open(local_release_valve_channel);// this opens the releace valve
 	return(0);
 }
 float flowmaster::pafr()

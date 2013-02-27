@@ -1,7 +1,7 @@
 #ifndef flowmasterH
 #define flowmasterH
 #include "alicat_flowmeter.h"
-#include "weederio.h"
+#include "Weederio.h"
 class flowmaster
 {
 	public:
@@ -25,6 +25,7 @@ class flowmaster
 		float quick_massflow(void);														// this is like the above but it does not check if the valves are apropriate
 		~flowmaster(void);                                    // this does nothing, my flowmeter classes should probably be deleted here
 	private:
+		Weederio weederio_instance;
 		float local_time_for_stabilization;
 		char local_release_valve_channel; // this stores the channel for the releace valve
 		alicat_flowmeter* flowmeter[10]; // an array of pointers to flowmeter class instances
