@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <Classes.hpp>
 #include <Dialogs.hpp>
-#include "alicat_flowmeter.h"
+#include "AlicatFlowmeter.h"
 #include "Functions.h"
 //---------------------------------------------------------------------------
 

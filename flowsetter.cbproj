@@ -64,8 +64,8 @@
 			<TASM_Debugging>None</TASM_Debugging>
 		</PropertyGroup>
 		<ItemGroup>
-			<CppCompile Include="alicat_flowmeter.cpp">
-				<DependentOn>alicat_flowmeter.h</DependentOn>
+			<CppCompile Include="AlicatFlowmeter.cpp">
+				<DependentOn>AlicatFlowmeter.h</DependentOn>
 				<BuildOrder>9</BuildOrder>
 			</CppCompile>
 			<CppCompile Include="core.cpp">

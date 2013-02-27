@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 
-#ifndef alicat_flowmeterH
-#define alicat_flowmeterH
+#ifndef AlicatFlowmeterH
+#define AlicatFlowmeterH
 #include <Classes.hpp>
 #include "RS232Primitive.h"
 

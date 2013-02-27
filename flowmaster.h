@@ -1,6 +1,6 @@
 #ifndef flowmasterH
 #define flowmasterH
-#include "alicat_flowmeter.h"
+#include "AlicatFlowmeter.h"
 #include "Weederio.h"
 class flowmaster
 {
