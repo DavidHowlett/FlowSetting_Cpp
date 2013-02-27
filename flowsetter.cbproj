@@ -90,9 +90,9 @@
 			<None Include="Hidden.h">
 				<BuildOrder>8</BuildOrder>
 			</None>
-			<CppCompile Include="motor.cpp">
-				<DependentOn>motor.h</DependentOn>
-				<BuildOrder>8</BuildOrder>
+			<CppCompile Include="Motor.cpp">
+				<DependentOn>Motor.h</DependentOn>
+				<BuildOrder>9</BuildOrder>
 			</CppCompile>
 			<CppCompile Include="RS232Primitive.cpp">
 				<DependentOn>RS232Primitive.h</DependentOn>

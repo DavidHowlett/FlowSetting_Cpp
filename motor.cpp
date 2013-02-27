@@ -1,10 +1,10 @@
-#include "motor.h"
+#include "Motor.h"
 #include <iostream.h>
-motor::motor()
+Motor::Motor()
 {
 	MotorPosition=0;
 }
-int motor::setup(int motor1port)
+int Motor::Setup(int motor1port)
 {
 	sprintf(TmpBuffer, "\\\\.\\COM%d",motor1port);
 	wchar_t wcstring[100];
@@ -45,9 +45,10 @@ int motor::setup(int motor1port)
 	WaitForData.WriteTotalTimeoutMultiplier =10;
 
 	SetCommTimeouts(MotorPortHandle,&StdTimeouts);
+
 	return(0);
 }
-int motor::SetMotorSettings()
+int Motor::SetMotorSettings()
 {
 	//write(".1,K20=0,K23=9,K37=100,K42=1500,^,");
 	//wait_for_response();
@@ -58,41 +59,41 @@ int motor::SetMotorSettings()
 	//printf("motor settings set\n");
 	return(0);
 }
-int motor::set_origin()
+int Motor::SetOrigin()
 {
-	go_to(1000000,10000,200000); // goes near to the origin (this is faster then origin setting)
-	clear_buffer();
-	write("|,"); //sets the origin
-	wait_for_response();
+	GoTo(1000000,10000,200000); // goes near to the origin (this is faster then origin setting)
+	ClearBuffer();
+	Write("|,"); //sets the origin
+	WaitForResponse();
 	Sleep(100);
-	clear_buffer(); // this is because the motor sends two responces when it reaches the origin with a small gap between them
+	ClearBuffer(); // this is because the motor sends two responces when it reaches the origin with a small gap between them
 	MotorPosition=0;
 	return(0);
 }
-int motor::go_to(int speed,int acceleration,int position)
+int Motor::GoTo(int speed,int acceleration,int position)
 {
 	// the maximum length of string that the hardware can take is 50 chars so the below command (with the other stuff) can overload it
 	sprintf(TmpBuffer,"S=%d,A=%d,P=%d,^,",speed,acceleration,position);
-	write(TmpBuffer); // string should now look like: S=500000,A=5000,P=1000000,^,
-	wait_for_response();
+	Write(TmpBuffer); // string should now look like: S=500000,A=5000,P=1000000,^,
+	WaitForResponse();
 	MotorPosition=position;
 	return(0);
 }
-int motor::fix_motor_free_state() // note this resumes the previous command so if it was impossible then it may still be impossible now
+int Motor::FixMotorFreeState() // note this resumes the previous command so if it was impossible then it may still be impossible now
 {
-	write("(");
+	Write("(");
 	Sleep(500); // this is to ensure that if the signal is sent back it is cleared so that the buffer is kept clear
-	clear_buffer();
+	ClearBuffer();
 	return(0);
 }
-int motor::position()
+int Motor::Position()
 {
 	return (MotorPosition);
 }
-int motor::pseudotorque()// note this does not return torque but a related quantity that is roughly linear with torque and current
+int Motor::PseudoTorque()// note this does not return torque but a related quantity that is roughly linear with torque and current
 {
-	write("?98,");
 	DWORD BytesRead;
+	Write("?98,");
 	for(int i=0;i<=1000;i++)
 	{
 	ReadFile(	MotorPortHandle,//HANDLE        hFile,
@@ -113,18 +114,16 @@ int motor::pseudotorque()// note this does not return torque but a related quant
 	printf("error: motor torque level not recived after 5 seconds/n");
 	return(1000000);
 }
-int motor::wait_for_response()
+int Motor::WaitForResponse()
 {
-	unsigned long BytesRead;
-	const int BufferSize=200;
-	char Buffer[BufferSize];
+	DWORD BytesRead;
 	for(int i=0;i<=5000;i++)
 	{
-	ReadFile(MotorPortHandle,                        //HANDLE        hFile,
-					 Buffer,                          //LPVOID        lpBuffer,
-					 BufferSize,                    //DWORD         nNumberOfBytesToRead,
-					&BytesRead,                       //LPDWORD       lpNumberOfBytesRead,
-					 FALSE);
+	ReadFile(	MotorPortHandle,	//HANDLE        hFile,
+				TmpBuffer,      	//LPVOID        lpBuffer,
+				TmpBufferSize,  	//DWORD         nNumberOfBytesToRead,
+				&BytesRead,          //LPDWORD       lpNumberOfBytesRead,
+				FALSE);
 		//Buffer[BytesRead]=0;									//Null terminate buffer so only valid data appears!
 		if (BytesRead>0)
 		{
@@ -136,33 +135,29 @@ int motor::wait_for_response()
 	printf("error: expected motor signal not recived after 5 seconds\n");
 	return (1);
 }
-int motor::write(char* to_send)
+int Motor::Write(char* to_send)
 {
-	DWORD BytesWritten;                        //Number of bytes written
 	AnsiString AStringSendMe=to_send;
-	WriteFile(		MotorPortHandle,                  //HANDLE hComFile
-					AStringSendMe.c_str(),                  //LPCVOID lpBuffer,
-					AStringSendMe.Length(),                  //DWORD nNumberOfBytesToWrite,  strlen
-					&BytesWritten ,                  //LPDWORD lpNumberOfBytesWritten,
-					FALSE);                  //LPOVERLAPPED lpOverlapped
+	WriteFile(	MotorPortHandle,       	//HANDLE hComFile
+				AStringSendMe.c_str(), 	//LPCVOID lpBuffer,
+				AStringSendMe.Length(),	//DWORD nNumberOfBytesToWrite,  strlen
+				&JunkData ,        		//LPDWORD lpNumberOfBytesWritten,
+				FALSE);                	//LPOVERLAPPED lpOverlapped
 	return(0);
 
 }
-int motor::clear_buffer()
+int Motor::ClearBuffer()
 {
-	unsigned long BytesRead;
-	const int BufferSize=200;
-	char Buffer[BufferSize];
-
-	ReadFile(MotorPortHandle,                        //HANDLE        hFile,
-					 Buffer,                          //LPVOID        lpBuffer,
-					 BufferSize,                    //DWORD         nNumberOfBytesToRead,
-					&BytesRead,                       //LPDWORD       lpNumberOfBytesRead,
-					 FALSE);
-	// read file clears windows's internal buffer
+	SetCommTimeouts(MotorPortHandle,&WaitForData);
+	ReadFile(	MotorPortHandle,	//HANDLE        hFile,
+				TmpBuffer,      	//LPVOID        lpBuffer,
+				TmpBufferSize,  	//DWORD         nNumberOfBytesToRead,
+				&JunkData,     		//LPDWORD       lpNumberOfBytesRead,
+				FALSE);
+	SetCommTimeouts(MotorPortHandle,&StdTimeouts);
 	return(0);
 }
-motor::~motor()
+Motor::~Motor()
 {
 	PurgeComm(MotorPortHandle,PURGE_RXCLEAR&PURGE_TXCLEAR);// this ditches the data in the port
 	CloseHandle(MotorPortHandle);

@@ -4,8 +4,8 @@
 #include <stdio.h>
 #include <string>
 //******************************************************************************
-#ifndef motor
-#include "motor.h"
+#ifndef Motor
+#include "Motor.h"
 #endif
 
 #ifndef flowmaster
@@ -73,7 +73,7 @@ bool run_again=true;
 const int max_table_size=10000;        // I can't use a varable as this value is needed at compile time
 int motor_position_table[max_table_size];
 float pafr_table[max_table_size]; // pressure is measured in bar, pafr = presure ajusted flow rate measured in ml/bar/min
-motor motor_instance;
+Motor motor_instance;
 flowmaster flowmaster_instance;
 //function declarations*********************************************************
 int setup(); // this should only be called at startup and should contain everything needed to initialise the system
@@ -165,9 +165,9 @@ int setup()
 														flowmeter5port, flowmeter5channel,flowmeter5maxflow,flowmeter5units_correction,
 														weederio1port,  pressure_transducer1port, time_for_stabilization, release_valve_channel);
 	//flowmaster_instance.lockdown();// this closes all known valves
-	motor_instance.setup(motor1port);
+	motor_instance.Setup(motor1port);
 	motor_instance.SetMotorSettings();
-	motor_instance.set_origin();
+	motor_instance.SetOrigin();
 	printf("pressure: %f bar  ",flowmaster_instance.pressure());
 	printf("massflow: %f SLPM  ",flowmaster_instance.massflow());
 	printf("pafr: %f SPLM/bar\n",flowmaster_instance.pafr());
@@ -216,18 +216,18 @@ int create_caliberation_data()
 		cal_motor_position_table[position_in_array]=1000000; // this is harmless and it is the end of data marker
 		cal_pafr_table[position_in_array]=0;  // these two lines initialise my caliberation array to harmless values
 	}
-	motor_instance.go_to(maxspeed,maxacc,spoint);
+	motor_instance.GoTo(maxspeed,maxacc,spoint);
 	float pafr=flowmaster_instance.pafr();
 	for(position_in_array=1;(pafr>0.001)
 												&&(torque<maxtorque)
 												&&(position_in_array<=(max_table_size-1))
 												&&(motorposition<too_far);position_in_array++)   // this while sets the point of cut off after which caliberation ends
 	{
-		motor_instance.go_to(maxspeed,maxacc,(motor_instance.position()+current_amount_to_add));
+		motor_instance.GoTo(maxspeed,maxacc,(motor_instance.Position()+current_amount_to_add));
 		Sleep(time_for_stabilization);
-		cal_motor_position_table[position_in_array]=motorposition=motor_instance.position();
+		cal_motor_position_table[position_in_array]=motorposition=motor_instance.Position();
 		cal_pafr_table[position_in_array]=pafr=flowmaster_instance.pafr();
-		torque=motor_instance.pseudotorque();
+		torque=motor_instance.PseudoTorque();
 		printf("position: %d  pseudotorque: %d  massflow: %f  pafr: %f\n",cal_motor_position_table[position_in_array],torque,flowmaster_instance.massflow(),cal_pafr_table[position_in_array]);
 		if (pafr<0.5)
 			current_amount_to_add=amount_to_add/5;
@@ -236,11 +236,11 @@ int create_caliberation_data()
 	}
 	if(!(pafr>0.001))
 		printf("caliberation stopped because low flow was reached\n");
-	if(!(motor_instance.pseudotorque()<maxtorque))
+	if(!(motor_instance.PseudoTorque()<maxtorque))
 		printf("caliberation stopped due to excess torque\n");
 	if(!(position_in_array<=(max_table_size-1)))
 		printf("caliberation stopped due to running out of space in this program's array\n");
-	if(!(motor_instance.position()<too_far))
+	if(!(motor_instance.Position()<too_far))
 		printf("caliberation stopped due to motor going too far\n");
 	most_recently_written_caliberation_data_num++;
 	calibration_data_num=most_recently_written_caliberation_data_num;
@@ -265,7 +265,7 @@ int create_caliberation_data()
 		}
 	}
 	flowmaster_instance.lockdown();
-	motor_instance.go_to(maxspeed,maxacc,npoint); // npoint= near point to origin
+	motor_instance.GoTo(maxspeed,maxacc,npoint); // npoint= near point to origin
 	fclose (pFile);
 	read_calibration_data();
 
@@ -291,22 +291,22 @@ int create_back_off_caliberation_data()
 		cal_pafr_table[position_in_array]=0;  // these two lines initialise my caliberation array to harmless values
 		cal_back_off_pafr_table[position_in_array]=0;
 	}
-	motor_instance.go_to(maxspeed,maxacc,spoint);
+	motor_instance.GoTo(maxspeed,maxacc,spoint);
 	float pafr=flowmaster_instance.pafr();
 	for(position_in_array=1;(pafr>0.001)
 												&&(torque<maxtorque)
 												&&(position_in_array<=(max_table_size-1))
 												&&(motorposition<too_far);position_in_array++)   // this while sets the point of cut off after which caliberation ends
 	{
-		motor_instance.go_to(maxspeed,maxacc,(motor_instance.position()+current_amount_to_add));
+		motor_instance.GoTo(maxspeed,maxacc,(motor_instance.Position()+current_amount_to_add));
 
-		cal_motor_position_table[position_in_array]=motorposition=motor_instance.position();
+		cal_motor_position_table[position_in_array]=motorposition=motor_instance.Position();
 		cal_pafr_table[position_in_array]=pafr=flowmaster_instance.pafr();
 
-		motor_instance.go_to(maxspeed,maxacc,(motor_instance.position()- dist_to_back_off)); // this backs the motor off so I can get a reading without bounce
+		motor_instance.GoTo(maxspeed,maxacc,(motor_instance.Position()- dist_to_back_off)); // this backs the motor off so I can get a reading without bounce
 		Sleep(time_for_stabilization);
 		cal_back_off_pafr_table[position_in_array]=flowmaster_instance.pafr();
-		motor_instance.go_to(maxspeed,maxacc,(motor_instance.position()+dist_to_back_off)); // this backs the motor off so I can get a reading without bounce
+		motor_instance.GoTo(maxspeed,maxacc,(motor_instance.Position()+dist_to_back_off)); // this backs the motor off so I can get a reading without bounce
 
 		printf("position: %d  massflow: %f  pafr: %f backed_off_pafr: %f\n",cal_motor_position_table[position_in_array],flowmaster_instance.massflow(),cal_pafr_table[position_in_array],cal_back_off_pafr_table[position_in_array]);
 		if (pafr<0.5)
@@ -316,11 +316,11 @@ int create_back_off_caliberation_data()
 	}
 	if(!(pafr>0.001))
 		printf("caliberation stopped because low flow was reached\n");
-	if(!(motor_instance.pseudotorque()<maxtorque))
+	if(!(motor_instance.PseudoTorque()<maxtorque))
 		printf("caliberation stopped due to excess torque\n");
 	if(!(position_in_array<=(max_table_size-1)))
 		printf("caliberation stopped due to running out of space in this program's array\n");
-	if(!(motor_instance.position()<too_far))
+	if(!(motor_instance.Position()<too_far))
 		printf("caliberation stopped due to motor going too far\n");
 
 	char name[30];
@@ -339,7 +339,7 @@ int create_back_off_caliberation_data()
 		}
 	}
 	flowmaster_instance.lockdown();
-	motor_instance.go_to(maxspeed,maxacc,npoint); // npoint= near point to origin
+	motor_instance.GoTo(maxspeed,maxacc,npoint); // npoint= near point to origin
 	fclose (pFile);
 	read_calibration_data();
 	return 0;
@@ -374,9 +374,9 @@ float algorithm_without_bounce_protection(float local_tpafr)
 	int iterations=0; // this just checks for the thing looping forever
 	int torque=0;
 	int flag=0;
-	int motorposition=motor_instance.position();
-	motor_instance.set_origin();
-	motor_instance.go_to(maxspeed,maxacc,spoint);
+	int motorposition=motor_instance.Position();
+	motor_instance.SetOrigin();
+	motor_instance.GoTo(maxspeed,maxacc,spoint);
 	flowmaster_instance.reset();
 	Sleep(2*time_for_stabilization);
 	float cpafr=flowmaster_instance.pafr(); // current pressure ajusted flow rate
@@ -401,7 +401,7 @@ float algorithm_without_bounce_protection(float local_tpafr)
 			printf("iterations: %d position: %d pafr: %f\n",iterations,motorposition,cpafr);
 			if((flag>=1)||(cpafr<=local_tpafr))// this breaks out of the loop if the flag is high or if it has gone below it's target flow
 			{
-				motor_instance.go_to(maxspeed,maxacc,npoint);
+				motor_instance.GoTo(maxspeed,maxacc,npoint);
 				Sleep(time_for_stabilization); // I sleep for a second time because the flow may change as the motor backs off
 				cpafr=flowmaster_instance.pafr();
 				flowmaster_instance.lockdown();
@@ -411,16 +411,16 @@ float algorithm_without_bounce_protection(float local_tpafr)
 				flag++;
 			//torque=motor_instance.pseudotorque();     // this line is not useful
 			cep=position_assosiated_with_pafr(cpafr);
-			motorposition=motor_instance.position();
-			motor_instance.go_to(maxspeed,maxacc,(motorposition+fract2move*(tep-cep)));
+			motorposition=motor_instance.Position();
+			motor_instance.GoTo(maxspeed,maxacc,(motorposition+fract2move*(tep-cep)));
 			Sleep(time_for_stabilization);
 			iterations++;
 		}
 	if(!(iterations<maxiterations))
 		printf("error: too many iterations,\n this program can handle an infinite number of iterations but the fact that there have been %d iterations without the desired flow rate being reached indicates something else is wrong\n",maxiterations);
-	if(!(motor_instance.position()<too_far))
+	if(!(motor_instance.Position()<too_far))
 		printf("error: program stopped motor because it went too far\n");
-	if(!(motor_instance.pseudotorque()<maxtorque))
+	if(!(motor_instance.PseudoTorque()<maxtorque))
 		printf("caliberation stopped due to excess torque\n");
 	flowmaster_instance.lockdown();
 	return(-2.0);
@@ -430,9 +430,9 @@ float algorithm_without_bounce_protection_for_internal_use(float local_tpafr)
 	int iterations=0; // this just checks for the thing looping forever
 	int torque=0;
 	int flag=0;
-	int motorposition=motor_instance.position();
-	motor_instance.set_origin();
-	motor_instance.go_to(maxspeed,maxacc,spoint);
+	int motorposition=motor_instance.Position();
+	motor_instance.SetOrigin();
+	motor_instance.GoTo(maxspeed,maxacc,spoint);
 	flowmaster_instance.reset();
 	Sleep(2*time_for_stabilization);
 	float cpafr=flowmaster_instance.pafr(); // current pressure ajusted flow rate
@@ -465,16 +465,16 @@ float algorithm_without_bounce_protection_for_internal_use(float local_tpafr)
 				flag++;
 			//torque=motor_instance.pseudotorque();     // this line is not useful
 			cep=position_assosiated_with_pafr(cpafr);
-			motorposition=motor_instance.position();
-			motor_instance.go_to(maxspeed,maxacc,(motorposition+fract2move*(tep-cep)));
+			motorposition=motor_instance.Position();
+			motor_instance.GoTo(maxspeed,maxacc,(motorposition+fract2move*(tep-cep)));
 			Sleep(time_for_stabilization);
 			iterations++;
 		}
 	if(!(iterations<maxiterations))
 		printf("error: too many iterations,\n this program can handle an infinite number of iterations but the fact that there have been %d iterations without the desired flow rate being reached indicates something else is wrong\n",maxiterations);
-	if(!(motor_instance.position()<too_far))
+	if(!(motor_instance.Position()<too_far))
 		printf("error: program stopped motor because it went too far\n");
-	if(!(motor_instance.pseudotorque()<maxtorque))
+	if(!(motor_instance.PseudoTorque()<maxtorque))
 		printf("caliberation stopped due to excess torque\n");
 	return(-2.0);
 }
@@ -497,18 +497,18 @@ float algorithm_with_bounce_protection(float local_tpafr)
 	int tep=0, cep=0; // target equivelent position, current equivelent position
 	int iterations=0; // this just checks for the thing looping forever
 	int torque=0;
-	motor_instance.go_to(maxspeed,maxacc,spoint);
+	motor_instance.GoTo(maxspeed,maxacc,spoint);
 	tep=position_assosiated_with_pafr(local_tpafr);
 	while((iterations<maxiterations)
 				&&(torque<maxtorque)
-				&&(motor_instance.position()<too_far))
+				&&(motor_instance.Position()<too_far))
 		{
-			motor_instance.go_to(maxspeed,maxacc,(motor_instance.position()-dist_to_back_off)); // this backs the motor off so I can get a reading without bounce
+			motor_instance.GoTo(maxspeed,maxacc,(motor_instance.Position()-dist_to_back_off)); // this backs the motor off so I can get a reading without bounce
 			cpafr=flowmaster_instance.pafr();
-			printf("iterations: %d position: %d pafr: %f\n",iterations,motor_instance.position(),cpafr);
+			printf("iterations: %d position: %d pafr: %f\n",iterations,motor_instance.Position(),cpafr);
 			if(cpafr<=(local_tpafr*(1+tferror))) // this breaks out of the loop if the flow is low enough to warrant it
 			{
-				motor_instance.go_to(maxspeed,maxacc,npoint);
+				motor_instance.GoTo(maxspeed,maxacc,npoint);
 				flowmaster_instance.lockdown(); // this closes the valves to make it safe for the user to open the jig
 				return (cpafr); // this returns the achieved flowrate, the calling function must decide if this flow is acceptable
 			}
@@ -516,17 +516,17 @@ float algorithm_with_bounce_protection(float local_tpafr)
 			{
 				cep=position_assosiated_with_pafr(cpafr);
 				//torque=motor_instance.pseudotorque();     // this line is not useful as the torque measurement is broken
-				motor_instance.go_to(maxspeed,maxacc,(motor_instance.position()+dist_to_back_off));// this moves the motor back to where it was
-				motor_instance.go_to(maxspeed/3,maxacc,(motor_instance.position()+fract2move*(tep-cep))); // I do this as two seperate moves so that the motor will be going slower for the fine movement at the end
+				motor_instance.GoTo(maxspeed,maxacc,(motor_instance.Position()+dist_to_back_off));// this moves the motor back to where it was
+				motor_instance.GoTo(maxspeed/3,maxacc,(motor_instance.Position()+fract2move*(tep-cep))); // I do this as two seperate moves so that the motor will be going slower for the fine movement at the end
 				Sleep(time_for_stabilization);
 				iterations++;
 			}
 		}
 	if(!(iterations<maxiterations))
 		printf("error: too many iterations,\n this program can handle an infinite number of iterations but the fact that there have been %d iterations without the desired flow rate being reached indicates something else is wrong\n",maxiterations);
-	if(!(motor_instance.position()<too_far))
+	if(!(motor_instance.Position()<too_far))
 		printf("error: program stopped motor because it went too far\n");
-	if(!(motor_instance.pseudotorque()<maxtorque))
+	if(!(motor_instance.PseudoTorque()<maxtorque))
 		printf("caliberation stopped due to excess torque\n");
 	flowmaster_instance.lockdown(); // this closes the valves to make it safe for the user to open the jig
 	return(-2.0);
