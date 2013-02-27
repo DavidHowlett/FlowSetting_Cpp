@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <iostream.h>
-#include "flowmaster.h"
+#include "Flowmaster.h"
 flowmaster::flowmaster()
 {
 	fminuse=0;
@@ -68,7 +68,7 @@ int flowmaster::createflowmeter(int port_num,int flowmeter_num)
 	char name[10];
 	fmpresent[flowmeter_num]=false; // this means the flowmeter is considered not to exist unless it is specificly stated to exist later
 	sprintf(name,"COM%d",port_num);
-	flowmeter[flowmeter_num] = new alicat_flowmeter(True);
+	flowmeter[flowmeter_num] = new AlicatFlowmeter(True);
 	flowmeter[flowmeter_num]->Setup(name,38400,'N',8,1);             //COM port, baud rate, parity, bytes per bit, stop bits
 	flowmeter[flowmeter_num]->Open();                                   //Enable port access
 	if (flowmeter[flowmeter_num]==NULL)

@@ -1,5 +1,3 @@
-//---------------------------------------------------------------------------
-
 #ifndef AlicatFlowmeterH
 #define AlicatFlowmeterH
 #include <Classes.hpp>
@@ -8,7 +6,7 @@
 const MeanReadingsCount=10;     //Number of readings to get a mean;
 
 //******************************************************************************
-class alicat_flowmeter : public RS232Primitive
+class AlicatFlowmeter : public RS232Primitive
 //******************************************************************************
 {
 	typedef struct tagTHREADNAME_INFO
@@ -21,7 +19,7 @@ class alicat_flowmeter : public RS232Primitive
 private:
 	void ReadAndProcess();                                   //Read the flowmeter data and update it
 public:
-	alicat_flowmeter(bool CreateSuspended);                         //Constructor
+	AlicatFlowmeter(bool CreateSuspended);                         //Constructor
 //	 __fastcall ~FlowMeter(void);                          //Destructor
 	void __fastcall Execute();                               //Thread execution loop. Critical!!
 	Cardinal DataAge();                                      //Age of data in clock ticks

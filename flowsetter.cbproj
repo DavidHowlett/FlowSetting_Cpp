@@ -75,9 +75,9 @@
 				<DependentOn>DumbStringList.h</DependentOn>
 				<BuildOrder>5</BuildOrder>
 			</CppCompile>
-			<CppCompile Include="flowmaster.cpp">
-				<DependentOn>flowmaster.h</DependentOn>
-				<BuildOrder>7</BuildOrder>
+			<CppCompile Include="FlowMaster.cpp">
+				<DependentOn>FlowMaster.h</DependentOn>
+				<BuildOrder>9</BuildOrder>
 			</CppCompile>
 			<CppCompile Include="FlowMeter.cpp">
 				<DependentOn>FlowMeter.h</DependentOn>

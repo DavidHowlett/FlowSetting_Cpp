@@ -1,7 +1,3 @@
-//---------------------------------------------------------------------------
-
-
-#pragma hdrstop
 #include <stdio.h>
 #include <Classes.hpp>
 #include <Dialogs.hpp>
@@ -13,7 +9,7 @@
 
 #pragma package(smart_init)
 //******************************************************************************
-alicat_flowmeter::alicat_flowmeter(bool CreateSuspended):RS232Primitive(CreateSuspended)  //Constructor
+AlicatFlowmeter::AlicatFlowmeter(bool CreateSuspended):RS232Primitive(CreateSuspended)  //Constructor
 //******************************************************************************
 {
 	LogCounter     = 0;                                         //Start putting the data into MeanSomething[0]
@@ -24,7 +20,7 @@ alicat_flowmeter::alicat_flowmeter(bool CreateSuspended):RS232Primitive(CreateSu
 	FGasType       ="None";
 }
 //******************************************************************************
-void alicat_flowmeter::ReadAndProcess()                         //Read the flowmeter data and update it
+void AlicatFlowmeter::ReadAndProcess()                         //Read the flowmeter data and update it
 //******************************************************************************
 {
 	AnsiString s1;
@@ -61,77 +57,77 @@ void alicat_flowmeter::ReadAndProcess()                         //Read the flowm
 }
 
 //******************************************************************************
-Cardinal alicat_flowmeter::DataAge()                              //Age of data in clock ticks
+Cardinal AlicatFlowmeter::DataAge()                              //Age of data in clock ticks
 //******************************************************************************
 {
 	return (GetTickCount()-TicksLastRead);
 }
 
 //******************************************************************************
-void alicat_flowmeter::SetPressureMonitor      (TEdit* Monitor)   //Optionally use an Edit Box to monitor the output
+void AlicatFlowmeter::SetPressureMonitor      (TEdit* Monitor)   //Optionally use an Edit Box to monitor the output
 //******************************************************************************
 {
 	FPressureMonitor=Monitor;
 }
 
 //******************************************************************************
-void alicat_flowmeter::SetTemperatureMonitor   (TEdit* Monitor)   //Optionally use an Edit Box to monitor the output
+void AlicatFlowmeter::SetTemperatureMonitor   (TEdit* Monitor)   //Optionally use an Edit Box to monitor the output
 //******************************************************************************
 {
 	FTemperatureMonitor=Monitor;
 }
 //******************************************************************************
-void alicat_flowmeter::SetVolumetricFlowMonitor(TEdit* Monitor)   //Optionally use an Edit Box to monitor the output
+void AlicatFlowmeter::SetVolumetricFlowMonitor(TEdit* Monitor)   //Optionally use an Edit Box to monitor the output
 //******************************************************************************
 {
 	FVolumetricFlowMonitor=Monitor;
 }
 //******************************************************************************
-void alicat_flowmeter::SetMassFlowMonitor      (TEdit* Monitor)   //Optionally use an Edit Box to monitor the output
+void AlicatFlowmeter::SetMassFlowMonitor      (TEdit* Monitor)   //Optionally use an Edit Box to monitor the output
 //******************************************************************************
 {
 	FMassFlowMonitor=Monitor;
 }
 //******************************************************************************
-void alicat_flowmeter::SetGasTypeMonitor       (TEdit* Monitor)   //Optionally use an Edit Box to monitor the output
+void AlicatFlowmeter::SetGasTypeMonitor       (TEdit* Monitor)   //Optionally use an Edit Box to monitor the output
 //******************************************************************************
 {
 	FGasTypeMonitor=Monitor;
 }
 //******************************************************************************
-float alicat_flowmeter::Pressure      () //Return the pressure reading
+float AlicatFlowmeter::Pressure      () //Return the pressure reading
 //******************************************************************************
 {
 	return FPressure;
 }
 
 //******************************************************************************
-float alicat_flowmeter::Temperature   () //Return the temperature reading
+float AlicatFlowmeter::Temperature   () //Return the temperature reading
 //******************************************************************************
 {
 	return FTemperature;
 }
 //******************************************************************************
-float alicat_flowmeter::VolumetricFlow() //Return the volumetric flow reading
+float AlicatFlowmeter::VolumetricFlow() //Return the volumetric flow reading
 //******************************************************************************
 {
 	return FVolumetricFlow;
 }
 //******************************************************************************
-float alicat_flowmeter::MassFlow      () //Return the mass flow reading
+float AlicatFlowmeter::MassFlow      () //Return the mass flow reading
 //******************************************************************************
 {
 	return FMassFlow;
 }
 //******************************************************************************
-String alicat_flowmeter::GasType       () //Return the gas type
+String AlicatFlowmeter::GasType       () //Return the gas type
 //******************************************************************************
 {
 	return FGasType;
 }
 
 //******************************************************************************
-float alicat_flowmeter::MeanPressure      () //Return the mean pressure reading
+float AlicatFlowmeter::MeanPressure      () //Return the mean pressure reading
 //******************************************************************************
 {
 	float Total=0;
@@ -142,7 +138,7 @@ float alicat_flowmeter::MeanPressure      () //Return the mean pressure reading
 }
 
 //******************************************************************************
-float alicat_flowmeter::MeanTemperature   () //Return the mean temperature reading
+float AlicatFlowmeter::MeanTemperature   () //Return the mean temperature reading
 //******************************************************************************
 {
 	float Total=0;
@@ -152,7 +148,7 @@ float alicat_flowmeter::MeanTemperature   () //Return the mean temperature readi
 	return Total/MeanReadingsCount;
 }
 //******************************************************************************
-float alicat_flowmeter::MeanVolumetricFlow() //Return the mean volumetric flow reading
+float AlicatFlowmeter::MeanVolumetricFlow() //Return the mean volumetric flow reading
 //******************************************************************************
 {
 	float Total=0;
@@ -162,7 +158,7 @@ float alicat_flowmeter::MeanVolumetricFlow() //Return the mean volumetric flow r
 	return Total/MeanReadingsCount;
 }
 //******************************************************************************
-float alicat_flowmeter::MeanMassFlow      () //Return the mean mass flow reading
+float AlicatFlowmeter::MeanMassFlow      () //Return the mean mass flow reading
 //******************************************************************************
 {
 	float Total=0;
@@ -172,7 +168,7 @@ float alicat_flowmeter::MeanMassFlow      () //Return the mean mass flow reading
 	return Total/MeanReadingsCount;
 }
 //******************************************************************************
-void alicat_flowmeter::SetName()
+void AlicatFlowmeter::SetName()
 //******************************************************************************
 {
 	THREADNAME_INFO info;
@@ -191,7 +187,7 @@ void alicat_flowmeter::SetName()
 }
 
 //******************************************************************************
-void __fastcall alicat_flowmeter::UpdateMonitors()  //Update the monitor fields, if any
+void __fastcall AlicatFlowmeter::UpdateMonitors()  //Update the monitor fields, if any
 //Monitor fields, if set, are automatically updated 
 //******************************************************************************
 {
@@ -204,7 +200,7 @@ void __fastcall alicat_flowmeter::UpdateMonitors()  //Update the monitor fields,
 }
 
 //******************************************************************************
-void __fastcall alicat_flowmeter::Execute()
+void __fastcall AlicatFlowmeter::Execute()
 //******************************************************************************
 {
 	AnsiString s;

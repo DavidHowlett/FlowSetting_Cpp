@@ -1,5 +1,5 @@
-#ifndef flowmasterH
-#define flowmasterH
+#ifndef FlowmasterH
+#define FlowmasterH
 #include "AlicatFlowmeter.h"
 #include "Weederio.h"
 class flowmaster
@@ -28,7 +28,7 @@ class flowmaster
 		Weederio weederio_instance;
 		float local_time_for_stabilization;
 		char local_release_valve_channel; // this stores the channel for the releace valve
-		alicat_flowmeter* flowmeter[10]; // an array of pointers to flowmeter class instances
+		AlicatFlowmeter* flowmeter[10]; // an array of pointers to flowmeter class instances
 		int num_flowmeters; // the number of avalible flowmeters
 		int size_order[10]; // this should contain the avalible flowmeters in size order.
 		int fminuse; // flow meter in use, 0 is a special value to say "none"
