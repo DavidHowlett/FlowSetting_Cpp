@@ -139,8 +139,6 @@ int user_interation_and_action()
 		create_back_off_caliberation_data();
 	else if(! strcmp (answer, "c"))
 		create_caliberation_data();
-	//else if(! strcmp (answer, "f"))
-	//	motor_instance.fix_motor_free_state();             // found not to work most of the time, it tries to continue the previous command and generaly if the previous command did not work then niether will doing it again
 	else if(isNumeric)
 	{
 		// commented out code interprets input as SLPM, used code interprets input as pafr
@@ -168,7 +166,7 @@ int setup()
 														weederio1port,  pressure_transducer1port, time_for_stabilization, release_valve_channel);
 	//flowmaster_instance.lockdown();// this closes all known valves
 	motor_instance.setup(motor1port);
-	motor_instance.set_K_values();
+	motor_instance.SetMotorSettings();
 	motor_instance.set_origin();
 	printf("pressure: %f bar  ",flowmaster_instance.pressure());
 	printf("massflow: %f SLPM  ",flowmaster_instance.massflow());

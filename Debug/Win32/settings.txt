@@ -10,7 +10,7 @@
 3.000000 	maximum pressure (not currently implemented)
 0.600000 	target pressure adjusted flow rate 
 0.010000 	target fractional error 
-9 		number of the calibration file to be used 
+8 		number of the calibration file to be used 
 9 		number of the most recently written calibration file 
 800.000000 	time for stabilization
 0.500000 	fraction to final position to move on each iteration 
@@ -22,21 +22,21 @@
 400000 		distance to back off, this is used when the motor backs off to get a measurement includeing the bounce effect
 F 		release valve channel
 
-20 		motor port (the port number should be set to -1 to signal when the device does not exist)
-21 		weeder io port (the port number should be set to -1 to signal when the device does not exist) 
+9 		motor port (the port number should be set to -1 to signal when the device does not exist)
+8 		weeder io port (the port number should be set to -1 to signal when the device does not exist) 
 -1 		pressure transducer port (the port number should be set to -1 to signal when the device does not exist)
 
-18 		flowmeter 1 port (the port number should be set to -1 to signal when the device does not exist)
+5 		flowmeter 1 port (the port number should be set to -1 to signal when the device does not exist)
 E 		weeder io channel for flowmeter 1(should be a capital letter)
 20.000000 		flowmeter 1 maximum flow (slpm)
 1 		flowmeter 1 units correction (1 for litres per min 1000 for ml)
 
-19 		flowmeter 2 port (the port number should be set to -1 to signal when the device does not exist)
+6 		flowmeter 2 port (the port number should be set to -1 to signal when the device does not exist)
 D 		weeder io channel for flowmeter 2(should be a capital letter)
 15.000000 		flowmeter 2 maximum flow (slpm)
 1000 		flowmeter 2 units correction (1 for litres per min 1000 for ml)
 
-15 		flowmeter 3 port (the port number should be set to -1 to signal when the device does not exist)
+7 		flowmeter 3 port (the port number should be set to -1 to signal when the device does not exist)
 C 		weeder io channel for flowmeter 3(should be a capital letter)
 0.250000 		flowmeter 3 maximum flow (slpm) 
 1000 		flowmeter 3 units correction (1 for litres per min 1000 for ml)

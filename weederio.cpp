@@ -1,8 +1,7 @@
-#pragma hdrstop
 #include <iostream.h>
 #include <System.hpp>
 #include "weederio.h"
-using namespace std;
+//using namespace std;
 HANDLE aComFile;
 int status[20]; // this will keep track internaly of the values shown by the io device. There will be no feedback. It should be 0 for closed and 1 for open
 weederio::weederio()
