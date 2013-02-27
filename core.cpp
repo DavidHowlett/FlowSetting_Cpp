@@ -166,7 +166,6 @@ int setup()
 														weederio1port,  pressure_transducer1port, time_for_stabilization, release_valve_channel);
 	//flowmaster_instance.lockdown();// this closes all known valves
 	motor_instance.Setup(motor1port);
-	motor_instance.SetMotorSettings();
 	motor_instance.SetOrigin();
 	printf("pressure: %f bar  ",flowmaster_instance.pressure());
 	printf("massflow: %f SLPM  ",flowmaster_instance.massflow());
