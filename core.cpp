@@ -84,7 +84,6 @@ float perform(float tpafr); // tpafr =(target pressure ajusted flow rate), funct
 float algorithm_without_bounce_protection(float local_tpafr);// this is the primary flow setting algorithum. it iteratively estimates the final position based on flow rate and moves 50% of the distance to the estimated final position. tpafr =(target pressure ajusted flow rate), function returns achived pafr
 float algorithm_without_bounce_protection_for_internal_use(float local_tpafr); // this is almost the same as the above but it does not back off from the jig. Also it does not lock down after finishing
 float algorithm_with_bounce_protection(float local_tpafr);// first this calls the main algorithum to get the flow close to it's final value, then it enters a second phase where it acts like the main algoritum with the one change that it backs off before each flow measurement.
-float extra_accurate_algorithm(float local_tpafr);// just a place holder, currently calls algorithm_with_bounce_protection
 int handle_result(float rpafr, float tpafr); // this looks at the flow rate achived by the setting algorithum, decides if it is within alowed limits and tells the user
 int list(); // this lists all alowed commands
 int view_settings(); // this displays the more important settings
@@ -356,8 +355,6 @@ float perform(float local_tpafr) // target pressure ajusted flow rate
 		return(algorithm_without_bounce_protection(local_tpafr));
 	if(algonum==2)
 		return (algorithm_with_bounce_protection(local_tpafr));
-	if(algonum==3)
-		return(extra_accurate_algorithm(local_tpafr));
 	else
 	{
 		printf("algorithm specified not recognised");
@@ -525,10 +522,6 @@ float algorithm_with_bounce_protection(float local_tpafr)
 		printf("caliberation stopped due to excess torque\n");
 	FlowMasterInstance.LockDown(); // this closes the valves to make it safe for the user to open the jig
 	return(-2.0);
-}
-float extra_accurate_algorithm(float local_tpafr)
-{
-	return(algorithm_with_bounce_protection(local_tpafr));// this is just a place holder until i come up with something better.
 }
 int handle_result(float rpafr, float local_tpafr)
 {
@@ -730,10 +723,4 @@ int write_settings()
 	fclose (pFile);
 	return 0;
 }
-/*
-int manual()
-{
-	printf("put user manual here\n");
-	return 0;
-}
-*/
+

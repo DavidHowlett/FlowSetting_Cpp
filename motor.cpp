@@ -58,7 +58,9 @@ int Motor::SetMotorSettings()
 }
 int Motor::SetOrigin()
 {
-	GoTo(1000000,10000,200000); // goes near to the origin (this is faster then origin setting)
+	// I would like to use the below line to speed things up but this would cause issues when
+	// the motor is recovering from a motor free state
+	//GoTo(1000000,10000,200000); // goes near to the origin (this is faster then origin setting)
 	ClearBuffer();
 	WriteToMotor("|,"); //sets the origin
 	WaitForResponse();
@@ -67,13 +69,13 @@ int Motor::SetOrigin()
 	MotorPosition=0;
 	return(0);
 }
-int Motor::GoTo(int speed,int acceleration,int position)
+int Motor::GoTo(int Speed,int Acceleration,int Position)
 {
 	// the maximum length of string that the hardware can take is 50 chars so the below command (with the other stuff) can overload it
-	sprintf(TmpBuffer,"S=%d,A=%d,P=%d,^,",speed,acceleration,position);
+	sprintf(TmpBuffer,"S=%d,A=%d,P=%d,^,",Speed,Acceleration,Position);
 	WriteToMotor(TmpBuffer); // string should now look something like: S=500000,A=5000,P=1000000,^,
 	WaitForResponse();
-	MotorPosition=position;
+	MotorPosition=Position;
 	return(0);
 }
 int Motor::FixMotorFreeState() // note this resumes the previous command so if it was impossible then it may still be impossible now

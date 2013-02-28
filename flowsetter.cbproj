@@ -68,8 +68,8 @@
 				<DependentOn>AlicatFlowmeter.h</DependentOn>
 				<BuildOrder>9</BuildOrder>
 			</CppCompile>
-			<CppCompile Include="core.cpp">
-				<BuildOrder>1</BuildOrder>
+			<CppCompile Include="Core.cpp">
+				<BuildOrder>9</BuildOrder>
 			</CppCompile>
 			<CppCompile Include="DumbStringList.cpp">
 				<DependentOn>DumbStringList.h</DependentOn>
