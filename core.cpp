@@ -108,13 +108,10 @@ int UserInterationAndAction()
 	//motor_instance.go_to(maxspeed,maxacc,NearPoint); //speed, acceleration, distance
 	printf("enter 's' to set a flow, 'e' for exit or 'l' for a list of possible commands\n");
 	scanf("%s",Answer);
-//**************// the below piece of code tests if the input was a number
-	if((Answer[0]<=57)&&(Answer[0]>=48))
-	{
+	if((Answer[0]<=57)&&(Answer[0]>=48)){ // this piece of code tests if the input was a number
 		ToBeSet=atof(Answer);
 		IsNumeric=true;
 	}
-//**************
 	if(! strcmp (Answer, "s")){// note strcmp outputs the opposite of what you would expect
 		rpafr=Perform(tpafr); // this tells the perform function to try to set the pafr to target pafr
 		HandleResult(rpafr,tpafr);
@@ -131,8 +128,7 @@ int UserInterationAndAction()
 		CreateBackOffCaliberationData();
 	else if(! strcmp (Answer, "c"))
 		CreateCaliberationData();
-	else if(IsNumeric)
-	{
+	else if(IsNumeric){
 		// commented out code interprets input as SLPM, used code interprets input as pafr
 		//float temp_target_pafr=to_be_set/flowmaster_instance.pressure();
 		//printf("target pressure adjusted flow rate: %f\n",temp_target_pafr);
@@ -166,22 +162,16 @@ int Setup()
 }
 int ReadCalibrationData()
 {
-	char Num[10];
 	char Name[30];
-	sprintf(Num,"%d",CalibrationDataNum);  // these lines of code assemble the name of the calibaration data file
-	strcpy(Name,"calibration data");
-	strcat(Name,Num);
-	strcat(Name,".txt");
+	sprintf(Name,"calibration data%d.txt",CalibrationDataNum);  // these lines of code assemble the name of the calibaration data file
 	int PositionInArray=0;
-	for(PositionInArray=0; PositionInArray<=MaxTableSize-1; PositionInArray++)
-	{
+	for(PositionInArray=0; PositionInArray<=MaxTableSize-1; PositionInArray++){
 		MotorPositionTable[PositionInArray]=1000000000;
 		PafrTable[PositionInArray]=0;  // these two lines initialise my caliberation array to harmless values
 	}
 	FILE * pFile;
 	pFile = fopen (Name,"r");// opens the caliberation data file
-	for(PositionInArray=0;PositionInArray<=MaxTableSize-1; PositionInArray++)   // the data terminates with 987654321 0, the motor will never go that far
-	{
+	for(PositionInArray=0;PositionInArray<=MaxTableSize-1; PositionInArray++){   // the data terminates with 987654321 0, the motor will never go that far
 		fscanf (pFile, "%d %f", &MotorPositionTable[PositionInArray], &PafrTable[PositionInArray]);
 		// printf ("I have read: %d and %f \n",motor_position_table[position_in_array],pafr_table[position_in_array]);
 	}
@@ -233,13 +223,8 @@ int CreateCaliberationData()
 	MostRecentlyWrittenCaliberationDataNum++;
 	CalibrationDataNum=MostRecentlyWrittenCaliberationDataNum;
 	WriteSettings();
-
-	char Num[10]; // this bit of code is poor, should be rewritten
 	char Name[30];
-	sprintf(Num,"%d",MostRecentlyWrittenCaliberationDataNum);
-	strcpy(Name,"calibration data");
-	strcat(Name,Num);
-	strcat(Name,".txt");
+	sprintf(Name,"calibration data%d.txt",CalibrationDataNum);  // these lines of code assemble the name of the calibaration data file
 	FILE * pFile;
 	pFile = fopen (Name,"w+");
 	if( pFile==NULL)
@@ -303,11 +288,11 @@ int CreateBackOffCaliberationData()
 	if(!(MotorInstance.Position()<TooFar))
 		printf("caliberation stopped due to motor going too far\n");
 
-	char Name[30];
-	strcpy(Name,"data with backing off (not used for calibration)");
-	strcat(Name,".txt");
+	//char Name[30];
+	//strcpy(Name,"data with backing off (not used for calibration)");
+	//strcat(Name,".txt");
 	FILE * pFile;
-	pFile = fopen (Name,"w+");
+	pFile = fopen ("data with backing off (not used for calibration).txt","w+");
 	if( pFile==NULL)
 		printf("error: could not access calibration file");
 	else{
