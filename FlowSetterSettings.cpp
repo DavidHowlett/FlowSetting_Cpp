@@ -1,28 +1,23 @@
 // Standard Header Files ---------------------------------------------------
-#include <stdio.h>
-#include <windows.h>
+#include <cassert>
 // My Header Files ---------------------------------------------------------
 #include "FlowSetterSettings.h"
 //---------------------------------------------------------------------------
-SettingsFileManager::SettingsFileManager(){
-}
-SettingsFileManager::~SettingsFileManager(){
-}
-SettingsFileManager::ReadFile(){
+FlowSetterSettings::ReadFile(){
 	FilePointer = fopen ("settings file.txt","r");
 	if(NULL==FilePointer){
-		int UserResponse = MessageBox(
-			NULL,
-			(LPCWSTR)L"Settings file not found\nCheck that the settings file is in the same folder as the program\nDo you want to try again?",
-			(LPCWSTR)L"Error message",
-			MB_ICONWARNING | MB_RETRYCANCEL | MB_DEFBUTTON1);
-		if(IDRETRY == UserResponse)
-			return this->ReadFile(); // I thought that recursion would be nicer then a loop this time
+		//int UserResponse = MessageBox(
+		//	NULL,
+		//	(LPCWSTR)L"Settings file not found\nCheck that the settings file is in the same folder as the program\nDo you want to try again?",
+		//	(LPCWSTR)L"Error message",
+		//	MB_ICONWARNING | MB_RETRYCANCEL | MB_DEFBUTTON1);
+		//if(IDRETRY == UserResponse)
+		//	return this->ReadFile(); // I thought that recursion would be nicer then a loop this time
 		return 1;
 	}else
 		return UnguardedReadFile();
 }
-SettingsFileManager::UnguardedReadFile(){
+FlowSetterSettings::UnguardedReadFile(){
 	int BrokenSettingsTest = 0;
 
 	fscanf (FilePointer,"%d",&LatestGoodFlowmeterPort);			fgets (SettingsDescriptors[0],MaxCharsInSettingDescriptor,FilePointer);
@@ -33,36 +28,37 @@ SettingsFileManager::UnguardedReadFile(){
 	fscanf (FilePointer,"%d",&BrokenSettingsTest);					fgets (SettingsDescriptors[7],MaxCharsInSettingDescriptor,FilePointer);
 
 	fclose (FilePointer);
-	if (1234567890==BrokenSettingsTest){
+	assert(1234567890==BrokenSettingsTest);
+	if (1234567890==BrokenSettingsTest)
 		return 0;
-	}else{
-		int TheUserResponse = MessageBox(
-			NULL,
-			(LPCWSTR)L"The settings file was found but not read successfully\nDo you want to try again?",
-			(LPCWSTR)L"Error message",
-			MB_ICONWARNING | MB_RETRYCANCEL | MB_DEFBUTTON1);
-		if(IDRETRY == TheUserResponse)
-			return this->ReadFile(); // I thought that recursion would be nicer then a loop this time
+	else{
+		//int TheUserResponse = MessageBox(
+		//	NULL,
+		//	(LPCWSTR)L"The settings file was found but not read successfully\nDo you want to try again?",
+		//	(LPCWSTR)L"Error message",
+		//	MB_ICONWARNING | MB_RETRYCANCEL | MB_DEFBUTTON1);
+		//if(IDRETRY == TheUserResponse)
+		//	return this->ReadFile(); // I thought that recursion would be nicer then a loop this time
 		return 2;
 	}
 }
-SettingsFileManager::WriteFile(){
+FlowSetterSettings::WriteFile(){
 	FilePointer = fopen ("settings file.txt","w");
 	if(NULL==FilePointer){
-		int UserResponse = MessageBox(
-			NULL,
-			(LPCWSTR)L"Settings file not found\nCheck that the settings file is in the same folder as the program and not write protected\nDo you want to try again?",
-			(LPCWSTR)L"Error message",
-			MB_ICONWARNING | MB_RETRYCANCEL | MB_DEFBUTTON1);
-		if(IDRETRY == UserResponse)
-			return this->WriteFile();
+		//int UserResponse = MessageBox(
+		//	NULL,
+		//	(LPCWSTR)L"Settings file not found\nCheck that the settings file is in the same folder as the program and not write protected\nDo you want to try again?",
+		//	(LPCWSTR)L"Error message",
+		//	MB_ICONWARNING | MB_RETRYCANCEL | MB_DEFBUTTON1);
+		//if(IDRETRY == UserResponse)
+		//	return this->WriteFile();
 		return 1;
 	}else
 		UnguardedWriteFile();
 	fclose (FilePointer);
 	return(0);
 }
-SettingsFileManager::UnguardedWriteFile(){
+FlowSetterSettings::UnguardedWriteFile(){
 	int BrokenSettingsTest = 1234567890;
 	fprintf (FilePointer,"%d%s",LatestGoodFlowmeterPort,SettingsDescriptors[0]);
 	fprintf (FilePointer,"%d%s",DataGatheringCycleTime,SettingsDescriptors[1]);

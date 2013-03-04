@@ -7,10 +7,12 @@
 // My Header Files ----------------------------------------------------------
 #include "Motor.h"
 #include "FlowMaster.h"
+#include "FlowSetterSettings.h"
 #include "Hidden.h"       // this contains documentation
 // My Classes ---------------------------------------------------------------
 Motor MotorInstance;
 FlowMaster FlowMasterInstance;
+FlowSetterSettings Settings;
 // Settings -----------------------------------------------------------------
 // if settings are working correctly all the below values will be overwritten in setup()
 int SafePoint=0; // this is the safe point near the jig
