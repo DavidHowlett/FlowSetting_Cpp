@@ -19,9 +19,9 @@ class FlowMaster
 		float MassFlow(void);       // this gets the current massflow measured in SLPM
 		~FlowMaster(void);          // this does nothing, my flowmeter classes should probably be deleted here
 	private:
-		int ReconsiderValves(void); // this checks if it is apropriate to move to a smaller valve set and if aproprate makes the change
+		bool ReconsiderValves(void); // this checks if it is apropriate to move to a smaller valve set and if aproprate makes the change
 		float QuickMassFlow(void);	// this is like the above but it does not check if the valves are apropriate
-		int BiggestFlowMeter();		// this function returns the position in the array that corresponds to the biggest flowmeter
+		void SwitchToFlowMeter(int PositionInArray);// there are several places in code where I wish to switch flowmeters so I put the code in one place
 	private:
 		Weederio WeederioInstance;
 		FlowSetterSettings* SettingsPointer;

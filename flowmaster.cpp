@@ -16,6 +16,7 @@ void FlowMaster::Setup(FlowSetterSettings* GivenSettingsPointer)
 	for(int i=0;i<MAXFLOWWMETERS;i++)
 		if (SettingsPointer->FlowMeterPort[i]>-1)// for item not in use the port will be -1
 			CreateFlowMeter(SettingsPointer->FlowMeterPort[i],i);
+	FindSizeOrder();
 	if(SettingsPointer->WeederioPort>-0.5){
 		WeederioInstance.Setup(SettingsPointer->WeederioPort);//COM port
 		LockDown();
@@ -34,11 +35,11 @@ bool FlowMaster::CreateFlowMeter(int PortNum,int FlowMeterNum)
 	FlowMeter[FlowMeterNum]->Setup(Name,38400,'N',8,1);             //COM port, baud rate, parity, bytes per bit, stop bits
 	FlowMeter[FlowMeterNum]->Open();                                   //Enable port access
 	if (FlowMeter[FlowMeterNum]==NULL){
-		printf("flowmeter%d on port%d not created. Cannot continue\n",FlowMeterNum,PortNum);
+		printf("flowmeter on port%d not created. Cannot continue\n",FlowMeterNum,PortNum);
 		return false;
 	}
 	FlowMeter[FlowMeterNum]->Resume();
-	printf("flowmeter%d port opened\n",FlowMeterNum);
+	printf("Alicat flowmeter found on port: %d\n",PortNum);
 	fmPresent[FlowMeterNum]=true;
 	NumFlowMeters++;
 	return true;
@@ -97,56 +98,45 @@ int FlowMaster::Reset()// this closes all valves except the one for the largest 
 	printf("current massflow: %f changed to %f SLPM flowmeter\n",QuickMassFlow(),SettingsPointer->FlowMeterMaxFlow[SizeOrder[0]]);
 	return 0;
 }
-int FlowMaster::ReconsiderValves()// this function tries to find the right valve for the current flowrate
+bool FlowMaster::ReconsiderValves()// this function tries to find the right valve for the current flowrate, it returns true if the valve changes
 {
-	//bool ThereWasAChange = false;
-	//do{
-	//	//if the flow is bigger then 100% of the current flowmeter then move to the flowmeter one bigger
-	//	//if the flow is smaller then 90% of the flowmeter one smaller then move to the smaller flowmeter
-	//
-	//}while(ThereWasAChange);
-
-	//--------------------------
-	if(fmInUse!=0){
-		bool DoAgain=true;
-		while(DoAgain){
-			DoAgain=false;
-			int i=0;
-			while((i<10)&&(fmInUse!=SizeOrder[i]))
-				i++;
-			if(i>=9)
-				printf("strange error in 'reconsider_valves' function, call programmer for help\n");
-			// at this point i is the value in the size_order list where fminuse can be found
-			if(SizeOrder[i+1]!=0)
-			{
-				float MassFlow=QuickMassFlow();
-				if(MassFlow<=(0.95*SettingsPointer->FlowMeterMaxFlow[SizeOrder[i+1]]))
-				{
-					WeederioInstance.Open(SettingsPointer->FlowMeterChannel[SizeOrder[i+1]]);
-					WeederioInstance.Close(SettingsPointer->FlowMeterChannel[SizeOrder[i]]);
-					printf("current massflow: %f changed to %f SLPM flowmeter\n",MassFlow,SettingsPointer->FlowMeterMaxFlow[SizeOrder[i+1]]);
-					fmInUse=SizeOrder[i+1];
-					Sleep(SettingsPointer->TimeForStabilization*2);
-					DoAgain=true;
-				}
-			}
+	if(fmInUse==-1)
+		return false;
+	bool DoAgain=true;
+	bool AValveChangeHappened=false;
+	while(DoAgain){
+		DoAgain=false;
+		int i;
+		for(i=0;(i<MAXFLOWWMETERS)&&(fmInUse!=SizeOrder[i]);i++);
+		assert(fmInUse==SizeOrder[i]);// at this point i is the value in the SizeOrder list where fmInUse can be found
+		//the below line checks if it is a good idea to move to a smaller flowmeter
+		if((SizeOrder[i+1]!=-1)&&(QuickMassFlow()<=(0.90*SettingsPointer->FlowMeterMaxFlow[SizeOrder[i+1]]))){
+			WeederioInstance.Open(SettingsPointer->FlowMeterChannel[SizeOrder[i+1]]);
+			WeederioInstance.Close(SettingsPointer->FlowMeterChannel[SizeOrder[i]]);
+			fmInUse=SizeOrder[i+1];
+			Sleep(SettingsPointer->TimeForStabilization*2);
+			printf("current massflow: %f changed to %f SLPM flowmeter\n",QuickMassFlow(),SettingsPointer->FlowMeterMaxFlow[SizeOrder[i+1]]);
+			DoAgain=true;
+			AValveChangeHappened=true;
 		}
+		//add code here to check if the flowmeter size should be increased
 	}
-	//-------------------
-	return 0;
+	return AValveChangeHappened;
 }
 int FlowMaster::LockDown() // this closes all valves and renders the system useless but safe
 {
-	for(int i=1;i<6;i++)
-	{
+	for(int i=0;i<MAXFLOWWMETERS;i++)
 		if(fmPresent[i]) // this should only close the valves that exist to save time
 			WeederioInstance.Close(SettingsPointer->FlowMeterChannel[i]);
-	}
 	//printf("current massflow: %f changed to no flowmeter\n",quick_massflow());
 	fmInUse=-1; //this value means that no flowmeter is in use
 	// it matters that the flowmeter valves are closed before the pressure releace valve is opened or you can blow your flowmeters
 	WeederioInstance.Open(SettingsPointer->ReleaseValveChannel);// this opens the releace valve
 	return 0;
+}
+void FlowMaster::SwitchToFlowMeter(){
+
+
 }
 float FlowMaster::pafr()
 {
@@ -156,7 +146,7 @@ float FlowMaster::Pressure()
 {
 	float Pressure=0;
 	if(NumFlowMeters<1){
-		printf("no flowmeters found by pressure finding code");
+		printf("no flowmeters found by pressure finding code\n");
 		return(-1);
 	}
 	for(int i=0;i<MAXFLOWWMETERS;i++){
@@ -174,8 +164,8 @@ float FlowMaster::MassFlow()
 }
 float FlowMaster::QuickMassFlow()
 {
-	float MassFlow=(FlowMeter[fmInUse]->MassFlow()/SettingsPointer->FlowMeterUnitsCorrection[fmInUse]);
-	return(MassFlow);
+	// the below line returns the mass flow corrected to be in SLPM
+	return(FlowMeter[fmInUse]->MassFlow()/SettingsPointer->FlowMeterUnitsCorrection[fmInUse]);
 }
 FlowMaster::~FlowMaster()
 {
