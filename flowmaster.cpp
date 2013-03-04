@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <iostream.h>
 #include "Flowmaster.h"
+#include "AlicatFlowmeter.h"
+#include "FlowSetterSettings.h"
 FlowMaster::FlowMaster()
 {
 	fmInUse=0;
@@ -8,56 +10,26 @@ FlowMaster::FlowMaster()
 	for(int i=0;i<10;i++)
 		fmPresent[i]=false;
 }
-void FlowMaster::Setup(	int FlowMeter1Port, char FlowMeter1Channel,float LocalFlowMeter1MaxFlow,int LocalFlowMeter1UnitsCorrection,
-						int FlowMeter2Port, char FlowMeter2Channel,float LocalFlowMeter2MaxFlow,int LocalFlowMeter2UnitsCorrection,
-						int FlowMeter3Port, char FlowMeter3Channel,float LocalFlowMeter3MaxFlow,int LocalFlowMeter3UnitsCorrection,
-						int FlowMeter4Port, char FlowMeter4Channel,float LocalFlowMeter4MaxFlow,int LocalFlowMeter4UnitsCorrection,
-						int FlowMeter5Port, char FlowMeter5Channel,float LocalFlowMeter5MaxFlow,int LocalFlowMeter5UnitsCorrection,
-						int Weederio1Port,  char PressureTransducer1Port,float TimeForStabilization, char ReleaseValveChannel)
+void FlowMaster::Setup(FlowSetterSettings* SettingsPointer)
 {
-	LocalTimeForStabilization=TimeForStabilization;
-	LocalReleaseValveChannel=ReleaseValveChannel;
-	// the idea here is to have the below variables freely avalible in this class and only set here
-	FlowMeterChannel[1]=FlowMeter1Channel;
-	FlowMeterMaxFlow[1]=LocalFlowMeter1MaxFlow;
-	FlowMeterUnitsCorrection[1]=LocalFlowMeter1UnitsCorrection;
-	FlowMeterChannel[2]=FlowMeter2Channel;
-	FlowMeterMaxFlow[2]=LocalFlowMeter2MaxFlow;
-	FlowMeterUnitsCorrection[2]=LocalFlowMeter2UnitsCorrection;
-	FlowMeterChannel[3]=FlowMeter3Channel;
-	FlowMeterMaxFlow[3]=LocalFlowMeter3MaxFlow;
-	FlowMeterUnitsCorrection[3]=LocalFlowMeter3UnitsCorrection;
-	FlowMeterChannel[4]=FlowMeter4Channel;
-	FlowMeterMaxFlow[4]=LocalFlowMeter4MaxFlow;
-	FlowMeterUnitsCorrection[4]=LocalFlowMeter4UnitsCorrection;
-	FlowMeterChannel[5]=FlowMeter5Channel;
-	FlowMeterMaxFlow[5]=LocalFlowMeter5MaxFlow;
-	FlowMeterUnitsCorrection[5]=LocalFlowMeter5UnitsCorrection;
-	if (FlowMeter1Port>-1)// for item not in use the port will be minus 1
-		CreateFlowMeter(FlowMeter1Port,1);
-	if (FlowMeter2Port>-1)// for item not in use the port will be minus 1
-		CreateFlowMeter(FlowMeter2Port,2);
-	if (FlowMeter3Port>-1)// for item not in use the port will be minus 1
-		CreateFlowMeter(FlowMeter3Port,3);
-	if (FlowMeter4Port>-1)// for item not in use the port will be minus 1
-		CreateFlowMeter(FlowMeter4Port,4);
-	if (FlowMeter5Port>-1)// for item not in use the port will be minus 1
-		CreateFlowMeter(FlowMeter5Port,5);
-
-	if (Weederio1Port>-0.5)
-	{
-		WeederioInstance.Setup(Weederio1Port);//COM port
-	LockDown();
-		io1Present=1;
-	}else{
-		io1Present=0;
+	for(int i=0;i<MAXFLOWWMETERS;i++){
+		if (SettingsPointer->FlowMeterPort[i]>-1)// for item not in use the port will be -1
+			CreateFlowMeter(SettingsPointer->FlowMeterPort[i],1);
 	}
-	if (PressureTransducer1Port>-1)
+	if (SettingsPointer->WeederioPort>-0.5)
+	{
+		WeederioInstance.Setup(SettingsPointer->WeederioPort);//COM port
+	LockDown();
+		ioPresent=1;
+	}else{
+		ioPresent=0;
+	}
+	if (SettingsPointer->PressureTransducerPort>-1)
 	{
 		// write code for presure transducer setup here
-		pt1Present=1;
+		ptPresent=1;
 	}else
-		pt1Present=0;
+		ptPresent=0;
 	FindSizeOrder();
 	Sleep(20); // this is to allow the flowmeter threads to get data so they be safely used
 	return;
@@ -168,7 +140,7 @@ float FlowMaster::pafr()
 float FlowMaster::Pressure()
 {
 	float Pressure=0;
-	if(pt1Present)
+	if(ptPresent)
 	{
 		// write code here for getting pressure from transducer here
 	}else{

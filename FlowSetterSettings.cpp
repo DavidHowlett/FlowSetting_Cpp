@@ -4,7 +4,7 @@
 #include "FlowSetterSettings.h"
 //---------------------------------------------------------------------------
 FlowSetterSettings::ReadFile(){
-	FilePointer = fopen ("settings file.txt","r");
+	FilePointer = fopen ("settings.txt","r");
 	if(NULL==FilePointer){
 		//int UserResponse = MessageBox(
 		//	NULL,
@@ -19,16 +19,45 @@ FlowSetterSettings::ReadFile(){
 }
 FlowSetterSettings::UnguardedReadFile(){
 	int BrokenSettingsTest = 0;
+	int i=0;
+	fscanf (FilePointer,"%d",&SafePoint);			fgets (SettingsDescriptors[i++],MaxCharsInSettingDescriptor,FilePointer);
+	fscanf (FilePointer,"%d",&NearPoint);			fgets (SettingsDescriptors[i++],MaxCharsInSettingDescriptor,FilePointer);
+	fscanf (FilePointer,"%d",&TooFar);				fgets (SettingsDescriptors[i++],MaxCharsInSettingDescriptor,FilePointer);
+	fscanf (FilePointer,"%d",&MaxSpeed);			fgets (SettingsDescriptors[i++],MaxCharsInSettingDescriptor,FilePointer);
+	fscanf (FilePointer,"%d",&MaxAcc);				fgets (SettingsDescriptors[i++],MaxCharsInSettingDescriptor,FilePointer);
+	fscanf (FilePointer,"%d",&MaxIterations);		fgets (SettingsDescriptors[i++],MaxCharsInSettingDescriptor,FilePointer);
+	fscanf (FilePointer,"%f",&GasFactor);			fgets (SettingsDescriptors[i++],MaxCharsInSettingDescriptor,FilePointer);
+	fscanf (FilePointer,"%f",&tPressure);			fgets (SettingsDescriptors[i++],MaxCharsInSettingDescriptor,FilePointer);
+	fscanf (FilePointer,"%f",&MinPressure);			fgets (SettingsDescriptors[i++],MaxCharsInSettingDescriptor,FilePointer);
+	fscanf (FilePointer,"%f",&MaxPressure);			fgets (SettingsDescriptors[i++],MaxCharsInSettingDescriptor,FilePointer);
+	fscanf (FilePointer,"%f",&tpafr);				fgets (SettingsDescriptors[i++],MaxCharsInSettingDescriptor,FilePointer);
+	fscanf (FilePointer,"%f",&tfError);				fgets (SettingsDescriptors[i++],MaxCharsInSettingDescriptor,FilePointer);
+	fscanf (FilePointer,"%d",&CalibrationDataNum);	fgets (SettingsDescriptors[i++],MaxCharsInSettingDescriptor,FilePointer);
+	fscanf (FilePointer,"%d",&MostRecentlyWrittenCaliberationDataNum);	fgets (SettingsDescriptors[i++],MaxCharsInSettingDescriptor,FilePointer);
+	fscanf (FilePointer,"%f",&TimeForStabilization);fgets (SettingsDescriptors[i++],MaxCharsInSettingDescriptor,FilePointer);
+	fscanf (FilePointer,"%f",&FractToMove);			fgets (SettingsDescriptors[i++],MaxCharsInSettingDescriptor,FilePointer);
+	fscanf (FilePointer,"%f",&MaxTorque);			fgets (SettingsDescriptors[i++],MaxCharsInSettingDescriptor,FilePointer);
+	fscanf (FilePointer,"%d",&AlgoNum);				fgets (SettingsDescriptors[i++],MaxCharsInSettingDescriptor,FilePointer);
+	fscanf (FilePointer,"%d",&AmountToAdd);			fgets (SettingsDescriptors[i++],MaxCharsInSettingDescriptor,FilePointer);
+	fscanf (FilePointer,"%d",&Debugging);			fgets (SettingsDescriptors[i++],MaxCharsInSettingDescriptor,FilePointer);
+	fscanf (FilePointer,"%f",&MaxBounceExpected);	fgets (SettingsDescriptors[i++],MaxCharsInSettingDescriptor,FilePointer);
+	fscanf (FilePointer,"%d",&DistToBackOff);		fgets (SettingsDescriptors[i++],MaxCharsInSettingDescriptor,FilePointer);
+	fscanf (FilePointer,"%c",&ReleaseValveChannel);	fgets (SettingsDescriptors[i++],MaxCharsInSettingDescriptor,FilePointer);
+	fscanf (FilePointer,"%d",&MotorPort);			fgets (SettingsDescriptors[i++],MaxCharsInSettingDescriptor,FilePointer);
+	fscanf (FilePointer,"%d",&WeederioPort);		fgets (SettingsDescriptors[i++],MaxCharsInSettingDescriptor,FilePointer);
+	fscanf (FilePointer,"%d",&PressureTransducerPort);fgets (SettingsDescriptors[i++],MaxCharsInSettingDescriptor,FilePointer);
 
-	fscanf (FilePointer,"%d",&LatestGoodFlowmeterPort);			fgets (SettingsDescriptors[0],MaxCharsInSettingDescriptor,FilePointer);
-	fscanf (FilePointer,"%d",&DataGatheringCycleTime);      fgets (SettingsDescriptors[1],MaxCharsInSettingDescriptor,FilePointer);
-	fscanf (FilePointer,"%d",&LastRawDataFileNumber);       fgets (SettingsDescriptors[2],MaxCharsInSettingDescriptor,FilePointer);
-	fscanf (FilePointer,"%d",&LastProcessedDataFileNumber);	fgets (SettingsDescriptors[3],MaxCharsInSettingDescriptor,FilePointer);
-	fscanf (FilePointer,"%f",&TriggerFlow);									fgets (SettingsDescriptors[4],MaxCharsInSettingDescriptor,FilePointer);
-	fscanf (FilePointer,"%d",&BrokenSettingsTest);					fgets (SettingsDescriptors[7],MaxCharsInSettingDescriptor,FilePointer);
+	for(int j=0;j<MAXFLOWWMETERS;j++){
+		fscanf (FilePointer,"%d",&FlowMeterPort[j]);			fgets (SettingsDescriptors[i++],MaxCharsInSettingDescriptor,FilePointer);
+		fscanf (FilePointer,"%c",&FlowMeterChannel[j]);			fgets (SettingsDescriptors[i++],MaxCharsInSettingDescriptor,FilePointer);
+		fscanf (FilePointer,"%f",&FlowMeterMaxFlow[j]);			fgets (SettingsDescriptors[i++],MaxCharsInSettingDescriptor,FilePointer);
+		fscanf (FilePointer,"%d",&FlowMeterUnitsCorrection[j]);	fgets (SettingsDescriptors[i++],MaxCharsInSettingDescriptor,FilePointer);
+	}
+	fscanf (FilePointer,"%d",&BrokenSettingsTest);fgets (SettingsDescriptors[i++],MaxCharsInSettingDescriptor,FilePointer);
+
 
 	fclose (FilePointer);
-	assert(1234567890==BrokenSettingsTest);
+	assert(1234567890==BrokenSettingsTest); // remove me later
 	if (1234567890==BrokenSettingsTest)
 		return 0;
 	else{
@@ -60,12 +89,42 @@ FlowSetterSettings::WriteFile(){
 }
 FlowSetterSettings::UnguardedWriteFile(){
 	int BrokenSettingsTest = 1234567890;
-	fprintf (FilePointer,"%d%s",LatestGoodFlowmeterPort,SettingsDescriptors[0]);
-	fprintf (FilePointer,"%d%s",DataGatheringCycleTime,SettingsDescriptors[1]);
-	fprintf (FilePointer,"%d%s",LastRawDataFileNumber,SettingsDescriptors[2]);
-	fprintf (FilePointer,"%d%s",LastProcessedDataFileNumber,SettingsDescriptors[3]);
-	fprintf (FilePointer,"%f%s",TriggerFlow,SettingsDescriptors[4]);
-	fprintf (FilePointer,"%d%s",BrokenSettingsTest,SettingsDescriptors[7]);
+	int i=0;
+	fprintf (FilePointer,"%d%s",SafePoint			,SettingsDescriptors[i++]);
+	fprintf (FilePointer,"%d%s",NearPoint			,SettingsDescriptors[i++]);
+	fprintf (FilePointer,"%d%s",TooFar				,SettingsDescriptors[i++]);
+	fprintf (FilePointer,"%d%s",MaxSpeed			,SettingsDescriptors[i++]);
+	fprintf (FilePointer,"%d%s",MaxAcc				,SettingsDescriptors[i++]);
+	fprintf (FilePointer,"%d%s",MaxIterations		,SettingsDescriptors[i++]);
+	fprintf (FilePointer,"%f%s",GasFactor			,SettingsDescriptors[i++]);
+	fprintf (FilePointer,"%f%s",tPressure			,SettingsDescriptors[i++]);
+	fprintf (FilePointer,"%f%s",MinPressure			,SettingsDescriptors[i++]);
+	fprintf (FilePointer,"%f%s",MaxPressure			,SettingsDescriptors[i++]);
+	fprintf (FilePointer,"%f%s",tpafr				,SettingsDescriptors[i++]);
+	fprintf (FilePointer,"%f%s",tfError				,SettingsDescriptors[i++]);
+	fprintf (FilePointer,"%d%s",CalibrationDataNum	,SettingsDescriptors[i++]);
+	fprintf (FilePointer,"%d%s",MostRecentlyWrittenCaliberationDataNum,SettingsDescriptors[i++]);
+	fprintf (FilePointer,"%f%s",TimeForStabilization,SettingsDescriptors[i++]);
+	fprintf (FilePointer,"%f%s",FractToMove			,SettingsDescriptors[i++]);
+	fprintf (FilePointer,"%f%s",MaxTorque			,SettingsDescriptors[i++]);
+	fprintf (FilePointer,"%d%s",AlgoNum				,SettingsDescriptors[i++]);
+	fprintf (FilePointer,"%d%s",AmountToAdd			,SettingsDescriptors[i++]);
+	fprintf (FilePointer,"%d%s",Debugging			,SettingsDescriptors[i++]);
+	fprintf (FilePointer,"%f%s",MaxBounceExpected	,SettingsDescriptors[i++]);
+	fprintf (FilePointer,"%d%s",DistToBackOff		,SettingsDescriptors[i++]);
+	fprintf (FilePointer,"%c%s",ReleaseValveChannel	,SettingsDescriptors[i++]);
+	fprintf (FilePointer,"%d%s",MotorPort			,SettingsDescriptors[i++]);
+	fprintf (FilePointer,"%d%s",WeederioPort		,SettingsDescriptors[i++]);
+	fprintf (FilePointer,"%d%s",PressureTransducerPort,SettingsDescriptors[i++]);
+
+	for(int j=0;j<MAXFLOWWMETERS;j++){
+		fprintf (FilePointer,"%d%s",FlowMeterPort[j]			,SettingsDescriptors[i++]);
+		fprintf (FilePointer,"%c%s",FlowMeterChannel[j]			,SettingsDescriptors[i++]);
+		fprintf (FilePointer,"%f%s",FlowMeterMaxFlow[j]			,SettingsDescriptors[i++]);
+		fprintf (FilePointer,"%d%s",FlowMeterUnitsCorrection[j]	,SettingsDescriptors[i++]);
+	}
+	fprintf (FilePointer,"%d%s",BrokenSettingsTest,SettingsDescriptors[i++]);
+
 	return 0;
 }
 
