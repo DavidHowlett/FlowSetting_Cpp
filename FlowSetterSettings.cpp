@@ -39,7 +39,6 @@ FlowSetterSettings::UnguardedReadFile(){
 	fscanf (FilePointer,"%f",&MaxTorque);			fgets (SettingsDescriptors[i++],MaxCharsInSettingDescriptor,FilePointer);
 	fscanf (FilePointer,"%d",&AlgoNum);				fgets (SettingsDescriptors[i++],MaxCharsInSettingDescriptor,FilePointer);
 	fscanf (FilePointer,"%d",&AmountToAdd);			fgets (SettingsDescriptors[i++],MaxCharsInSettingDescriptor,FilePointer);
-	fscanf (FilePointer,"%d",&Debugging);			fgets (SettingsDescriptors[i++],MaxCharsInSettingDescriptor,FilePointer);
 	fscanf (FilePointer,"%f",&MaxBounceExpected);	fgets (SettingsDescriptors[i++],MaxCharsInSettingDescriptor,FilePointer);
 	fscanf (FilePointer,"%d",&DistToBackOff);		fgets (SettingsDescriptors[i++],MaxCharsInSettingDescriptor,FilePointer);
 	fscanf (FilePointer,"%c",&ReleaseValveChannel);	fgets (SettingsDescriptors[i++],MaxCharsInSettingDescriptor,FilePointer);
@@ -53,7 +52,7 @@ FlowSetterSettings::UnguardedReadFile(){
 		fscanf (FilePointer,"%f",&FlowMeterMaxFlow[j]);			fgets (SettingsDescriptors[i++],MaxCharsInSettingDescriptor,FilePointer);
 		fscanf (FilePointer,"%d",&FlowMeterUnitsCorrection[j]);	fgets (SettingsDescriptors[i++],MaxCharsInSettingDescriptor,FilePointer);
 	}
-	fscanf (FilePointer,"%d",&BrokenSettingsTest);fgets (SettingsDescriptors[i++],MaxCharsInSettingDescriptor,FilePointer);
+	fscanf (FilePointer,"%d",&BrokenSettingsTest);	fgets (SettingsDescriptors[i++],MaxCharsInSettingDescriptor,FilePointer);
 
 
 	fclose (FilePointer);
@@ -109,7 +108,6 @@ FlowSetterSettings::UnguardedWriteFile(){
 	fprintf (FilePointer,"%f%s",MaxTorque			,SettingsDescriptors[i++]);
 	fprintf (FilePointer,"%d%s",AlgoNum				,SettingsDescriptors[i++]);
 	fprintf (FilePointer,"%d%s",AmountToAdd			,SettingsDescriptors[i++]);
-	fprintf (FilePointer,"%d%s",Debugging			,SettingsDescriptors[i++]);
 	fprintf (FilePointer,"%f%s",MaxBounceExpected	,SettingsDescriptors[i++]);
 	fprintf (FilePointer,"%d%s",DistToBackOff		,SettingsDescriptors[i++]);
 	fprintf (FilePointer,"%c%s",ReleaseValveChannel	,SettingsDescriptors[i++]);

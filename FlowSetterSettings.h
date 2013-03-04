@@ -31,7 +31,6 @@ class FlowSetterSettings
 		float 	MaxTorque; // I can't measure torque only related quantitys so beware
 		int 	AlgoNum; // this describes which algorithm is used for setting flows
 		int 	AmountToAdd; // this describes how far the motor moves during each iteration of caliberation data generation
-		int 	Debugging; //this should be 1 for debugging mode but 0 for normal use
 		float 	MaxBounceExpected; // the units are SLPM per Bar
 		int 	DistToBackOff;// this is used when the motor backs off to get a measurement includeing the bounce effect
 		char 	ReleaseValveChannel;

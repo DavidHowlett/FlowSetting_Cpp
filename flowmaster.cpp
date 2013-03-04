@@ -7,95 +7,109 @@ FlowMaster::FlowMaster()
 {
 	fmInUse=0;
 	NumFlowMeters=0;
-	for(int i=0;i<10;i++)
+	for(int i=0;i<MAXFLOWWMETERS;i++)
 		fmPresent[i]=false;
 }
-void FlowMaster::Setup(FlowSetterSettings* SettingsPointer)
+void FlowMaster::Setup(FlowSetterSettings* GivenSettingsPointer)
 {
-	for(int i=0;i<MAXFLOWWMETERS;i++){
+	SettingsPointer=GivenSettingsPointer;
+	for(int i=0;i<MAXFLOWWMETERS;i++)
 		if (SettingsPointer->FlowMeterPort[i]>-1)// for item not in use the port will be -1
-			CreateFlowMeter(SettingsPointer->FlowMeterPort[i],1);
-	}
-	if (SettingsPointer->WeederioPort>-0.5)
-	{
+			CreateFlowMeter(SettingsPointer->FlowMeterPort[i],i);
+	if(SettingsPointer->WeederioPort>-0.5){
 		WeederioInstance.Setup(SettingsPointer->WeederioPort);//COM port
-	LockDown();
-		ioPresent=1;
-	}else{
-		ioPresent=0;
-	}
-	if (SettingsPointer->PressureTransducerPort>-1)
-	{
-		// write code for presure transducer setup here
-		ptPresent=1;
+		LockDown();
+		ioPresent=true;
 	}else
-		ptPresent=0;
-	FindSizeOrder();
+		ioPresent=false;
 	Sleep(20); // this is to allow the flowmeter threads to get data so they be safely used
 	return;
 }
-int FlowMaster::CreateFlowMeter(int PortNum,int FlowMeterNum)
+bool FlowMaster::CreateFlowMeter(int PortNum,int FlowMeterNum)
 {
 	char Name[10];
 	fmPresent[FlowMeterNum]=false; // this means the flowmeter is considered not to exist unless it is specificly stated to exist later
 	sprintf(Name,"COM%d",PortNum);
-	FlowMeter[FlowMeterNum] = new AlicatFlowmeter(True);
+	FlowMeter[FlowMeterNum]= new AlicatFlowmeter(True);
 	FlowMeter[FlowMeterNum]->Setup(Name,38400,'N',8,1);             //COM port, baud rate, parity, bytes per bit, stop bits
 	FlowMeter[FlowMeterNum]->Open();                                   //Enable port access
-	if (FlowMeter[FlowMeterNum]==NULL)
+	if (FlowMeter[FlowMeterNum]==NULL){
 		printf("flowmeter%d on port%d not created. Cannot continue\n",FlowMeterNum,PortNum);
-	else{
-		FlowMeter[FlowMeterNum]->Resume();
-		printf("flowmeter%d port opened\n",FlowMeterNum);
-		fmPresent[FlowMeterNum]=true;
-		NumFlowMeters++;
-	};
-	return 0;
+		return false;
+	}
+	FlowMeter[FlowMeterNum]->Resume();
+	printf("flowmeter%d port opened\n",FlowMeterNum);
+	fmPresent[FlowMeterNum]=true;
+	NumFlowMeters++;
+	return true;
 }
-int FlowMaster::FindSizeOrder()// this tries to produce an array listing the flowmeters in size order
+
+void FlowMaster::FindSizeOrder()// this tries to produce an array listing the flowmeters in size order
 {
-	// this is a sorting algorithum to find the order of the sizes of the flowmeters
+	// this is a sorting algorithum to find the order of the sizes of the flowmeters that exist
 	// it cycles through the list looking for the biggest one still unaccounted for (not in list of sizes)
-	// when it has a new biggest one it records the number of the flowmeter in the size_order array
-	bool fmUnaccountedFor[10];
-	for(int i=0;i<10;i++){
-		SizeOrder[i]=0; // this initialises all to 0 (a none valid value)
+	// when it has a new biggest one it records the number of the flowmeter in the SizeOrder array
+	bool fmUnaccountedFor[MAXFLOWWMETERS];
+	for(int i=0;i<MAXFLOWWMETERS;i++){
+		SizeOrder[i]=-1; // this initialises all to -1 (a none valid value)
 		fmUnaccountedFor[i]=fmPresent[i];
 	}
 	int CurrentBiggestFlowMeter;
-	for(int i=0;i<10;i++)
-	{
-		CurrentBiggestFlowMeter=0;
-		for(int j=1;j<6;j++)
-		{
-			if((fmUnaccountedFor[j])&&((CurrentBiggestFlowMeter==0)||(FlowMeterMaxFlow[j]>=FlowMeterMaxFlow[CurrentBiggestFlowMeter])))
+	for(int i=0;i<MAXFLOWWMETERS;i++){
+		CurrentBiggestFlowMeter=-1;
+		for(int j=0;j<MAXFLOWWMETERS;j++){
+			if(	(fmUnaccountedFor[j])&&((-1==CurrentBiggestFlowMeter)
+				||(SettingsPointer->FlowMeterMaxFlow[j]>=SettingsPointer->FlowMeterMaxFlow[CurrentBiggestFlowMeter])))
 				CurrentBiggestFlowMeter=j;
 		}
 		SizeOrder[i]=CurrentBiggestFlowMeter; // note that this array starts from 0 unlike the others in this class
 		fmUnaccountedFor[CurrentBiggestFlowMeter]=false;
 	}
-	return 0;
+	return;
 }
-int FlowMaster::Reset()// this closes all valves except what is needed  for the largest flowmeter
+
+/*
+int FlowMaster::BiggestFlowMeter(){ //this function returns the position in the array that corresponds to the biggest flowmeter
+	int LargestFlowMeterSoFar=0;
+	for(int i=0;i<MAXFLOWWMETERS;i++)
+		if(SettingsPointer->FlowMeterMaxFlow[i]  >  SettingsPointer->FlowMeterMaxFlow[LargestFlowMeterSoFar])
+			LargestFlowMeterSoFar=i;
+	return LargestFlowMeterSoFar;
+}
+int FlowMaster::NextBiggestFlowMeter(){//fred, not finished
+	// this function returns the position in the array that corresponds to the flowmeter one
+	// smaller then the current one, if the current flowmeter is the smallest, the current flowmeter position is returned
+	int LargestFlowMeterSoFar=0;
+	for(int i=0;i<MAXFLOWWMETERS;i++)
+		if(fmPresent[i])
+			if(SettingsPointer->FlowMeterMaxFlow[i] )
+
+}
+*/
+int FlowMaster::Reset()// this closes all valves except the one for the largest flowmeter
 {
-	WeederioInstance.Close(LocalReleaseValveChannel);// this closes tha relece valve so the pressure can build up
-	for(int i=1;i<6;i++)
-	{
-		if(fmPresent[i]&&(WeederioInstance.RequestStatus(FlowMeterChannel[i]))) // this should only close the valves that exist and are open to save time
-			WeederioInstance.Close(FlowMeterChannel[i]);
-	}
-	WeederioInstance.Open(FlowMeterChannel[SizeOrder[0]]);// this opens the valve for the biggest flowmeter
+	WeederioInstance.Close(SettingsPointer->ReleaseValveChannel);// this closes tha relece valve so the pressure can build up
+	for(int i=0;i<MAXFLOWWMETERS;i++)
+		if(fmPresent[i]&&(WeederioInstance.RequestStatus(SettingsPointer->FlowMeterChannel[i]))) //to save time this should only close the valves that exist and are open
+			WeederioInstance.Close(SettingsPointer->FlowMeterChannel[i]);
+	WeederioInstance.Open(SettingsPointer->FlowMeterChannel[SizeOrder[0]]);// this opens the valve for the biggest flowmeter
 	fmInUse=SizeOrder[0];// this states that the flowmeter in use is the largest
-	printf("current massflow: %f changed to %f SLPM flowmeter\n",QuickMassFlow(),FlowMeterMaxFlow[SizeOrder[0]]);
+	printf("current massflow: %f changed to %f SLPM flowmeter\n",QuickMassFlow(),SettingsPointer->FlowMeterMaxFlow[SizeOrder[0]]);
 	return 0;
 }
 int FlowMaster::ReconsiderValves()// this function tries to find the right valve for the current flowrate
 {
-	if(fmInUse!=0)
-	{
+	//bool ThereWasAChange = false;
+	//do{
+	//	//if the flow is bigger then 100% of the current flowmeter then move to the flowmeter one bigger
+	//	//if the flow is smaller then 90% of the flowmeter one smaller then move to the smaller flowmeter
+	//
+	//}while(ThereWasAChange);
+
+	//--------------------------
+	if(fmInUse!=0){
 		bool DoAgain=true;
-		while(DoAgain)
-		{
+		while(DoAgain){
 			DoAgain=false;
 			int i=0;
 			while((i<10)&&(fmInUse!=SizeOrder[i]))
@@ -106,18 +120,19 @@ int FlowMaster::ReconsiderValves()// this function tries to find the right valve
 			if(SizeOrder[i+1]!=0)
 			{
 				float MassFlow=QuickMassFlow();
-				if(MassFlow<=(0.95*FlowMeterMaxFlow[SizeOrder[i+1]]))
+				if(MassFlow<=(0.95*SettingsPointer->FlowMeterMaxFlow[SizeOrder[i+1]]))
 				{
-					WeederioInstance.Open(FlowMeterChannel[SizeOrder[i+1]]);
-					WeederioInstance.Close(FlowMeterChannel[SizeOrder[i]]);
-					printf("current massflow: %f changed to %f SLPM flowmeter\n",MassFlow,FlowMeterMaxFlow[SizeOrder[i+1]]);
+					WeederioInstance.Open(SettingsPointer->FlowMeterChannel[SizeOrder[i+1]]);
+					WeederioInstance.Close(SettingsPointer->FlowMeterChannel[SizeOrder[i]]);
+					printf("current massflow: %f changed to %f SLPM flowmeter\n",MassFlow,SettingsPointer->FlowMeterMaxFlow[SizeOrder[i+1]]);
 					fmInUse=SizeOrder[i+1];
-					Sleep(LocalTimeForStabilization*2);
+					Sleep(SettingsPointer->TimeForStabilization*2);
 					DoAgain=true;
 				}
 			}
 		}
 	}
+	//-------------------
 	return 0;
 }
 int FlowMaster::LockDown() // this closes all valves and renders the system useless but safe
@@ -125,12 +140,12 @@ int FlowMaster::LockDown() // this closes all valves and renders the system usel
 	for(int i=1;i<6;i++)
 	{
 		if(fmPresent[i]) // this should only close the valves that exist to save time
-			WeederioInstance.Close(FlowMeterChannel[i]);
+			WeederioInstance.Close(SettingsPointer->FlowMeterChannel[i]);
 	}
 	//printf("current massflow: %f changed to no flowmeter\n",quick_massflow());
-	fmInUse=0; //this value means that no flowmeter is in use
+	fmInUse=-1; //this value means that no flowmeter is in use
 	// it matters that the flowmeter valves are closed before the pressure releace valve is opened or you can blow your flowmeters
-	WeederioInstance.Open(LocalReleaseValveChannel);// this opens the releace valve
+	WeederioInstance.Open(SettingsPointer->ReleaseValveChannel);// this opens the releace valve
 	return 0;
 }
 float FlowMaster::pafr()
@@ -140,43 +155,26 @@ float FlowMaster::pafr()
 float FlowMaster::Pressure()
 {
 	float Pressure=0;
-	if(ptPresent)
-	{
-		// write code here for getting pressure from transducer here
-	}else{
-		if(NumFlowMeters<1)
-		{
-			printf("no flowmeters found by pressure finding code");
-			return(-1);
+	if(NumFlowMeters<1){
+		printf("no flowmeters found by pressure finding code");
+		return(-1);
 	}
-		if(fmPresent[1])
-		Pressure+=FlowMeter[1]->Pressure();
-		if(fmPresent[2])
-		Pressure+=FlowMeter[2]->Pressure();
-		if(fmPresent[3])
-		Pressure+=FlowMeter[3]->Pressure();
-		if(fmPresent[4])
-		Pressure+=FlowMeter[4]->Pressure();
-		if(fmPresent[5])
-		Pressure+=FlowMeter[5]->Pressure();
-		Pressure=Pressure/NumFlowMeters;
-		// the above finds an average
-		Pressure=Pressure*0.0689475729;
-		// the above converts from psi to bar
+	for(int i=0;i<MAXFLOWWMETERS;i++){
+		if(fmPresent[i])
+			Pressure+=FlowMeter[i]->Pressure();
 	}
+	Pressure=Pressure/NumFlowMeters;// this finds an average
+	Pressure=Pressure*0.0689475729;// this converts from psi to bar
 	return Pressure;
 }
 float FlowMaster::MassFlow()
 {
 	ReconsiderValves();
-	float MassFlow=QuickMassFlow();
-	return(MassFlow);
+	return(QuickMassFlow());
 }
 float FlowMaster::QuickMassFlow()
 {
-	float MassFlow=0;
-	if(fmInUse>0) //this checks that there is a useable flowmeter so the system does not crash on startup
-		MassFlow=(FlowMeter[fmInUse]->MassFlow()/FlowMeterUnitsCorrection[fmInUse]);
+	float MassFlow=(FlowMeter[fmInUse]->MassFlow()/SettingsPointer->FlowMeterUnitsCorrection[fmInUse]);
 	return(MassFlow);
 }
 FlowMaster::~FlowMaster()

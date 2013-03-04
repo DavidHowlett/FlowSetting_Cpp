@@ -22,7 +22,6 @@ float PafrTable[MaxTableSize]; // pressure is measured in bar, pafr = presure aj
 //function declarations*********************************************************
 int Setup(); // this should only be called at startup and should contain everything needed to initialise the system
 int UserInterationAndAction(); // this asks the user what to do next and calls the apropriate code
-//int ReadSettings(); // this reads all of the settings from the settings file
 int ReadCalibrationData(); // this is a decleration for a function that reads calibration data.txt and stores it in an array
 int CreateCaliberationData(); // this slowly moves the motor forwards while monitoring the flow and then records to file a curve that relates position to flow for the prupose of caliberateing future movements
 //int CreateBackOffCaliberationData(); // this works in a similar way to the above but also records flow rate readings before and after backing off
@@ -34,9 +33,6 @@ float AlgorithmWithBounceProtection(float Local_tpafr);// first this calls the m
 int HandleResult(float rpafr, float tpafr); // this looks at the flow rate achived by the setting algorithum, decides if it is within alowed limits and tells the user
 int List(); // this lists all alowed commands
 int ViewSettings(); // this displays the more important settings
-//int WriteSettings(); // this writes the current settings to the settings file
-//int manual();
-
 //******************************************************************************
 int _tmain(int argc, _TCHAR* argv[])
 {
