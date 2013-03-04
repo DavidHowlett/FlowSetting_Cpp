@@ -1,6 +1,6 @@
 4000000 		safe point 
 100000 		near point 
-4200000 	motor gone too far point 
+4300000 	motor gone too far point 
 1400000 	motor speed 
 50000 	motor acceleration 
 1000 		maximum iterations in setting (should be large)
@@ -8,13 +8,13 @@
 2.000000 	target pressure (not currently implemented)
 1.000000 	minimum pressure (not currently implemented)
 3.000000 	maximum pressure (not currently implemented)
-0.600000 	target pressure adjusted flow rate 
-0.010000 	target fractional error 
-8 		number of the calibration file to be used 
-9 		number of the most recently written calibration file 
+0.800000 	target pressure adjusted flow rate 
+0.050000 	target fractional error 
+10 		number of the calibration file to be used 
+10 		number of the most recently written calibration file 
 800.000000 	time for stabilization
 0.500000 	fraction to final position to move on each iteration 
-3000.000000 	maximum torque
+3000000.000000 	maximum torque
 1 		number of the algorithm used for setting flows
 5000 		amount to move on each iteration of calibration data generation
 1 		debugging (set to 1 for debugging and 0 for normal use)

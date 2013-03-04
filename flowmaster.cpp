@@ -204,7 +204,7 @@ float FlowMaster::QuickMassFlow()
 {
 	float MassFlow=0;
 	if(fmInUse>0) //this checks that there is a useable flowmeter so the system does not crash on startup
-		MassFlow=(FlowMeter[fmInUse]->MassFlow());
+		MassFlow=(FlowMeter[fmInUse]->MassFlow()/FlowMeterUnitsCorrection[fmInUse]);
 	return(MassFlow);
 }
 FlowMaster::~FlowMaster()

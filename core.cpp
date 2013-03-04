@@ -75,7 +75,7 @@ int UserInterationAndAction(); // this asks the user what to do next and calls t
 int ReadSettings(); // this reads all of the settings from the settings file
 int ReadCalibrationData(); // this is a decleration for a function that reads calibration data.txt and stores it in an array
 int CreateCaliberationData(); // this slowly moves the motor forwards while monitoring the flow and then records to file a curve that relates position to flow for the prupose of caliberateing future movements
-int CreateBackOffCaliberationData(); // this works in a similar way to the above but also records flow rate readings before and after backing off
+//int CreateBackOffCaliberationData(); // this works in a similar way to the above but also records flow rate readings before and after backing off
 int PositionAssosiatedWithPafr(float pafr); //note this kind of thing does not initialise pafr
 float Perform(float tpafr); // tpafr =(target pressure ajusted flow rate), function returns achived pafr
 float AlgorithmWithoutBounceProtection(float Local_tpafr);// this is the primary flow setting algorithum. it iteratively estimates the final position based on flow rate and moves 50% of the distance to the estimated final position. tpafr =(target pressure ajusted flow rate), function returns achived pafr
@@ -124,8 +124,8 @@ int UserInterationAndAction()
 	//	manual();
 	else if(! strcmp (Answer, "v"))
 		ViewSettings();
-	else if(! strcmp (Answer, "cbo"))
-		CreateBackOffCaliberationData();
+	//else if(! strcmp (Answer, "cbo"))
+	//	CreateBackOffCaliberationData();
 	else if(! strcmp (Answer, "c"))
 		CreateCaliberationData();
 	else if(IsNumeric){
@@ -239,6 +239,7 @@ int CreateCaliberationData()
 	ReadCalibrationData();
 	return 0;
 }
+/*
 int CreateBackOffCaliberationData()
 {
 	int CalMotorPositionTable[MaxTableSize];
@@ -305,6 +306,7 @@ int CreateBackOffCaliberationData()
 	ReadCalibrationData();
 	return 0;
 }
+*/
 int PositionAssosiatedWithPafr(float pafr)// this gets the position on the caliberation curve that is assosiated with a pressure adjusted flow rate
 {
 	int PositionInArray=0;
@@ -382,6 +384,7 @@ float AlgorithmWithoutBounceProtection(float LocalTpafr)
 	if(!(MotorInstance.PseudoTorque()<MaxTorque))
 		printf("caliberation stopped due to excess torque\n");
 	FlowMasterInstance.LockDown();
+	MotorInstance.GoTo(MaxSpeed,MaxAcc,NearPoint); // NearPoint= near point to origin
 	return(-2.0);
 }
 /*
@@ -489,6 +492,7 @@ float algorithm_with_bounce_protection(float local_tpafr)
 	if(!(MotorInstance.PseudoTorque()<maxtorque))
 		printf("caliberation stopped due to excess torque\n");
 	FlowMasterInstance.LockDown(); // this closes the valves to make it safe for the user to open the jig
+	MotorInstance.GoTo(MaxSpeed,MaxAcc,NearPoint); // NearPoint= near point to origin
 	return(-2.0);
 }
 */

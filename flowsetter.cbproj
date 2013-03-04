@@ -83,6 +83,10 @@
 				<DependentOn>FlowMeter.h</DependentOn>
 				<BuildOrder>6</BuildOrder>
 			</CppCompile>
+			<CppCompile Include="FlowSetterSettings.cpp">
+				<DependentOn>FlowSetterSettings.h</DependentOn>
+				<BuildOrder>10</BuildOrder>
+			</CppCompile>
 			<CppCompile Include="Functions.cpp">
 				<DependentOn>Functions.h</DependentOn>
 				<BuildOrder>7</BuildOrder>
