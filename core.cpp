@@ -180,74 +180,6 @@ int CreateCaliberationData()
 	ReadCalibrationData();
 	return 0;
 }
-/*
-int CreateBackOffCaliberationData()
-{
-	int CalMotorPositionTable[MaxTableSize];
-	float CalPafrTable[MaxTableSize];
-	float CalBackOffPafrTable[MaxTableSize];
-	int PositionInArray=0;
-	int Torque=0;
-	int MotorPosition=0;
-	int CurrentAmountToAdd=AmountToAdd;
-	FlowMasterInstance.Reset();
-	Sleep(2*TimeForStabilization);
-	CalMotorPositionTable[0]=-1000000000;
-	CalPafrTable[0]=700000;					 // this and the above line just ensure that if flows are requested that are above the caliberration curve's highest point then the system simply moves forwards slowly
-	CalBackOffPafrTable[0]=700000;
-	for(PositionInArray=1; PositionInArray<=MaxTableSize-1;PositionInArray++){
-		CalMotorPositionTable[PositionInArray]=1000000; // this is harmless and it is the end of data marker
-		CalPafrTable[PositionInArray]=0;  // these two lines initialise my caliberation array to harmless values
-		CalBackOffPafrTable[PositionInArray]=0;
-	}
-	MotorInstance.GoTo(MaxSpeed,MaxAcc,SafePoint);
-	float pafr=FlowMasterInstance.pafr();
-	for(	PositionInArray=1;(pafr>0.001)
-			&&(Torque<MaxTorque)
-			&&(PositionInArray<=(MaxTableSize-1))
-			&&(MotorPosition<TooFar);PositionInArray++){   // this while sets the point of cut off after which caliberation ends
-		MotorInstance.GoTo(MaxSpeed,MaxAcc,(MotorInstance.Position()+CurrentAmountToAdd));
-		CalMotorPositionTable[PositionInArray]=MotorPosition=MotorInstance.Position();
-		CalPafrTable[PositionInArray]=pafr=FlowMasterInstance.pafr();
-		MotorInstance.GoTo(MaxSpeed,MaxAcc,(MotorInstance.Position()- DistToBackOff)); // this backs the motor off so I can get a reading without bounce
-		Sleep(TimeForStabilization);
-		CalBackOffPafrTable[PositionInArray]=FlowMasterInstance.pafr();
-		MotorInstance.GoTo(MaxSpeed,MaxAcc,(MotorInstance.Position()+DistToBackOff)); // this backs the motor off so I can get a reading without bounce
-
-		printf("position: %d  massflow: %f  pafr: %f backed_off_pafr: %f\n",
-			CalMotorPositionTable[PositionInArray],FlowMasterInstance.MassFlow(),CalPafrTable[PositionInArray],CalBackOffPafrTable[PositionInArray]);
-		if (pafr<0.5)
-			CurrentAmountToAdd=AmountToAdd/5;
-		if (pafr<0.1)
-			CurrentAmountToAdd=AmountToAdd/50;
-	}
-	if(!(pafr>0.001))
-		printf("caliberation stopped because low flow was reached\n");
-	if(!(MotorInstance.PseudoTorque()<MaxTorque))
-		printf("caliberation stopped due to excess torque\n");
-	if(!(PositionInArray<=(MaxTableSize-1)))
-		printf("caliberation stopped due to running out of space in this program's array\n");
-	if(!(MotorInstance.Position()<TooFar))
-		printf("caliberation stopped due to motor going too far\n");
-
-	//char Name[30];
-	//strcpy(Name,"data with backing off (not used for calibration)");
-	//strcat(Name,".txt");
-	FILE * pFile;
-	pFile = fopen ("data with backing off (not used for calibration).txt","w+");
-	if( pFile==NULL)
-		printf("error: could not access calibration file");
-	else{
-		for(PositionInArray=0; PositionInArray<=(MaxTableSize-1); PositionInArray++)   // the data terminates with 987654321 0, the motor will never go that far
-			fprintf (pFile, "%d\t%f\t%f\n", CalMotorPositionTable[PositionInArray], CalPafrTable[PositionInArray],CalBackOffPafrTable[PositionInArray]);
-	}
-	FlowMasterInstance.LockDown();
-	MotorInstance.GoTo(MaxSpeed,MaxAcc,NearPoint); // NearPoint= near point to origin
-	fclose (pFile);
-	ReadCalibrationData();
-	return 0;
-}
-*/
 int PositionAssosiatedWithPafr(float pafr)// this gets the position on the caliberation curve that is assosiated with a pressure adjusted flow rate
 {
 	int PositionInArray=0;
@@ -265,8 +197,7 @@ float Perform(float LocalTpafr) // target pressure ajusted flow rate
 		return(AlgorithmWithoutBounceProtection(LocalTpafr));
 	//if(AlgonNm==2)
 	//	return(AlgorithmWithBounceProtection(LocalTpafr));
-	else
-	{
+	else{
 		printf("algorithm specified not recognised");
 		return(-2);
 	}

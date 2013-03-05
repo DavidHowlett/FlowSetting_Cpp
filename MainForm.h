@@ -14,13 +14,15 @@
 class TForm1 : public TForm
 {
 __published:	// IDE-managed Components
-	TMainMenu *MainMenu1;
-	TMenuItem *abc1;
-	TMenuItem *dsdf1;
-	TMenuItem *fds1;
-	TMenuItem *ds1;
-	TMenuItem *sfds1;
-	TMenuItem *sfd1;
+	TButton *SetFlow;
+	TButton *Button2;
+	TEdit *MassFlowMonitor;
+	TEdit *TargetMassFlow;
+	TLabel *Label1;
+	TLabel *Label2;
+	TLabel *Label3;
+	TListBox *Log;
+	TButton *ClearEventLog;
 private:	// User declarations
 public:		// User declarations
 	__fastcall TForm1(TComponent* Owner);
