@@ -1,4 +1,4 @@
-3770000 	safe point 
+3720000 	safe point 
 100000 		near point 
 3900000 	motor gone too far point 
 1400000 	motor speed 
@@ -8,15 +8,15 @@
 2.000000 	target pressure (not currently implemented)
 1.000000 	minimum pressure (not currently implemented)
 3.000000 	maximum pressure (not currently implemented)
-0.800000 	target pressure adjusted flow rate 
+0.500000 	target pressure adjusted flow rate 
 0.050000 	target fractional error 
-10 		number of the calibration file to be used 
-10 		number of the most recently written calibration file 
-800.000000 	time for stabilization
+11 		number of the calibration file to be used 
+11 		number of the most recently written calibration file 
+500.000000 	time for stabilization
 0.500000 	fraction to final position to move on each iteration 
 3000000.000000 	maximum torque
 1 		number of the algorithm used for setting flows
-5000 		amount to move on each iteration of calibration data generation
+3000 		amount to move on each iteration of calibration data generation
 0.025000 	maximum bounce expected measured in SLPM per Bar
 400000 		distance to back off, this is used when the motor backs off to get a measurement includeing the bounce effect
 F 		release valve channel

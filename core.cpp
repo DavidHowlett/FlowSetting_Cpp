@@ -66,12 +66,8 @@ int UserInterationAndAction()
 		RunAgain=false;
 	else if(! strcmp (Answer, "l"))
 		List();
-	//else if(! strcmp (answer, "m"))
-	//	manual();
 	else if(! strcmp (Answer, "v"))
 		ViewSettings();
-	//else if(! strcmp (Answer, "cbo"))
-	//	CreateBackOffCaliberationData();
 	else if(! strcmp (Answer, "c"))
 		CreateCaliberationData();
 	else if(IsNumeric){
@@ -150,8 +146,8 @@ int CreateCaliberationData()
 				,CalMotorPositionTable[PositionInArray],Torque,FlowMasterInstance.MassFlow(),CalPafrTable[PositionInArray]);
 		if (pafr<0.5)
 			CurrentAmountToAdd=Settings.AmountToAdd/5;
-		if (pafr<0.1)
-			CurrentAmountToAdd=Settings.AmountToAdd/50;
+		//if (pafr<0.1)
+		//	CurrentAmountToAdd=Settings.AmountToAdd/20;
 	}
 	if(!(pafr>0.001))
 		printf("caliberation stopped because low flow was reached\n");
@@ -170,10 +166,9 @@ int CreateCaliberationData()
 	pFile = fopen (Name,"w+");
 	if( pFile==NULL)
 		printf("error: could not access calibration file");
-	else{
+	else
 		for(PositionInArray=0; PositionInArray<=(MaxTableSize-1); PositionInArray++)   // the data terminates with 987654321 0, the motor will never go that far
 			fprintf (pFile, "%d\t%f\n", CalMotorPositionTable[PositionInArray], CalPafrTable[PositionInArray]);
-	}
 	FlowMasterInstance.LockDown();
 	MotorInstance.GoTo(Settings.MaxSpeed,Settings.MaxAcc,Settings.NearPoint); // NearPoint= near point to origin
 	fclose (pFile);
