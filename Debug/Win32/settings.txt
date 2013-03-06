@@ -1,6 +1,6 @@
-4000000 	safe point 
+3770000 	safe point 
 100000 		near point 
-4300000 	motor gone too far point 
+3900000 	motor gone too far point 
 1400000 	motor speed 
 50000 		motor acceleration 
 1000 		maximum iterations in setting (should be large)
@@ -20,7 +20,6 @@
 0.025000 	maximum bounce expected measured in SLPM per Bar
 400000 		distance to back off, this is used when the motor backs off to get a measurement includeing the bounce effect
 F 		release valve channel
-
 9 		motor port (the port number should be set to -1 to signal when the device does not exist)
 8 		weeder io port (the port number should be set to -1 to signal when the device does not exist) 
 -1 		pressure transducer port (the port number should be set to -1 to signal when the device does not exist)
@@ -51,9 +50,3 @@ G 		weeder io channel for flowmeter 5(should be a capital letter)
 1 		flowmeter 5 units correction (1 for litres per min 1000 for ml) 
 
 1234567890 	don't change me, I test if settings are read correctly
-
-******* end of data ******* 
-
- the numbers in this file can be modified by the end user, you probably wish to back it up first though. 
-Also you can change the text after 'end of data' how ever you wish and it will be ignored by the program but
- if you change any of the text before the end of data marker the program will break

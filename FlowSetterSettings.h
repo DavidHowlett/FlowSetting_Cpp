@@ -49,7 +49,7 @@ class FlowSetterSettings
 		int 	UnguardedWriteFile();
 	private:
 		FILE*	FilePointer;
-		static const int MaxSettings = 10;
+		static const int MaxSettings = 100;
 		static const int MaxCharsInSettingDescriptor = 500;
 		char 	SettingsDescriptors[MaxSettings][MaxCharsInSettingDescriptor];
 };

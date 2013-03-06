@@ -73,7 +73,7 @@ int Motor::GoTo(int Speed,int Acceleration,int Position)
 {
 	// the maximum length of string that the hardware can take is 50 chars so the below command (with the other stuff) can overload it
 	sprintf(TmpBuffer,"S=%d,A=%d,P=%d,^,",Speed,Acceleration,Position);
-	WriteToMotor(TmpBuffer); // string should now look something like: S=500000,A=5000,P=1000000,^,
+	WriteToMotor(TmpBuffer); // string should now look something like: S=500000,A=10000,P=1000000,^,
 	WaitForResponse();
 	MotorPosition=Position;
 	return(0);

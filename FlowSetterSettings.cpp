@@ -71,7 +71,7 @@ FlowSetterSettings::UnguardedReadFile(){
 	}
 }
 FlowSetterSettings::WriteFile(){
-	FilePointer = fopen ("settings file.txt","w");
+	FilePointer = fopen ("settings.txt","w");
 	if(NULL==FilePointer){
 		//int UserResponse = MessageBox(
 		//	NULL,
@@ -113,13 +113,13 @@ FlowSetterSettings::UnguardedWriteFile(){
 	fprintf (FilePointer,"%c%s",ReleaseValveChannel	,SettingsDescriptors[i++]);
 	fprintf (FilePointer,"%d%s",MotorPort			,SettingsDescriptors[i++]);
 	fprintf (FilePointer,"%d%s",WeederioPort		,SettingsDescriptors[i++]);
-	fprintf (FilePointer,"%d%s",PressureTransducerPort,SettingsDescriptors[i++]);
+	fprintf (FilePointer,"%d%s\n",PressureTransducerPort,SettingsDescriptors[i++]);
 
 	for(int j=0;j<MAXFLOWWMETERS;j++){
 		fprintf (FilePointer,"%d%s",FlowMeterPort[j]			,SettingsDescriptors[i++]);
 		fprintf (FilePointer,"%c%s",FlowMeterChannel[j]			,SettingsDescriptors[i++]);
 		fprintf (FilePointer,"%f%s",FlowMeterMaxFlow[j]			,SettingsDescriptors[i++]);
-		fprintf (FilePointer,"%d%s",FlowMeterUnitsCorrection[j]	,SettingsDescriptors[i++]);
+		fprintf (FilePointer,"%d%s\n",FlowMeterUnitsCorrection[j]	,SettingsDescriptors[i++]);
 	}
 	fprintf (FilePointer,"%d%s",BrokenSettingsTest,SettingsDescriptors[i++]);
 

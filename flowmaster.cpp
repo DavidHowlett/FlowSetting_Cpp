@@ -134,10 +134,10 @@ int FlowMaster::LockDown() // this closes all valves and renders the system usel
 	WeederioInstance.Open(SettingsPointer->ReleaseValveChannel);// this opens the releace valve
 	return 0;
 }
-void FlowMaster::SwitchToFlowMeter(){
-
-
-}
+//void FlowMaster::SwitchToFlowMeter(){
+//
+//
+//}
 float FlowMaster::pafr()
 {
 	 return(MassFlow()/Pressure());

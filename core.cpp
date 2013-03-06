@@ -90,7 +90,7 @@ int UserInterationAndAction()
 int Setup()
 {
 	Settings.ReadFile(); // it matters that read settings is before I get the caliberation data
-	//write_settings();
+	Settings.WriteFile();// for debugging
 	ReadCalibrationData();
 	FlowMasterInstance.Setup(&Settings);
 	//flowmaster_instance.lockdown();// this closes all known valves
@@ -215,25 +215,21 @@ float AlgorithmWithoutBounceProtection(float LocalTpafr)
 	float cpafr=FlowMasterInstance.pafr(); // current pressure ajusted flow rate
 	int tep=PositionAssosiatedWithPafr(LocalTpafr);// target equivelent position, current equivelent position
 	int cep=PositionAssosiatedWithPafr(cpafr);
-	if (LocalTpafr<0.0001)
-	{
+	if (LocalTpafr<0.0001){
 		printf("flow too small to set\n");
 		FlowMasterInstance.LockDown();
 		return (-2);
 	}
-	if (cpafr<=(LocalTpafr*(1+Settings.tfError)))
-	{
+	if (cpafr<=(LocalTpafr*(1+Settings.tfError))){
 		FlowMasterInstance.LockDown();
 		return (cpafr);
 	}
 	while((Iterations<Settings.MaxIterations)
 				&&(Torque<Settings.MaxTorque)
-				&&(MotorPosition<Settings.TooFar))
-		{
+				&&(MotorPosition<Settings.TooFar)){
 			cpafr=FlowMasterInstance.pafr();
 			printf("iterations: %d position: %d pafr: %f\n",Iterations,MotorPosition,cpafr);
-			if((Flag>=1)||(cpafr<=LocalTpafr))// this breaks out of the loop if the flag is high or if it has gone below it's target flow
-			{
+			if((Flag>=1)||(cpafr<=LocalTpafr)){// this breaks out of the loop if the flag is high or if it has gone below it's target flow
 				MotorInstance.GoTo(Settings.MaxSpeed,Settings.MaxAcc,Settings.NearPoint);
 				Sleep(Settings.TimeForStabilization); // I sleep for a second time because the flow may change as the motor backs off
 				cpafr=FlowMasterInstance.pafr();
@@ -259,140 +255,23 @@ float AlgorithmWithoutBounceProtection(float LocalTpafr)
 	MotorInstance.GoTo(Settings.MaxSpeed,Settings.MaxAcc,Settings.NearPoint); // NearPoint= near point to origin
 	return(-2.0);
 }
-/*
-float algorithm_without_bounce_protection_for_internal_use(float local_tpafr)
-{
-	int iterations=0; // this just checks for the thing looping forever
-	int torque=0;
-	int flag=0;
-	int motorposition=MotorInstance.Position();
-	MotorInstance.SetOrigin();
-	MotorInstance.GoTo(maxspeed,maxacc,SafePoint);
-	FlowMasterInstance.Reset();
-	Sleep(2*time_for_stabilization);
-	float cpafr=FlowMasterInstance.pafr(); // current pressure ajusted flow rate
-	int tep=position_assosiated_with_pafr(local_tpafr);// target equivelent position, current equivelent position
-	int cep=position_assosiated_with_pafr(cpafr);
-	if (local_tpafr<0.0001)
-	{
-		printf("flow too small to set\n");
-		return (-2);
-	}
-	if (cpafr<=(local_tpafr*(1+tferror)))
-	{
-		return (cpafr);
-	}
-	while((iterations<maxiterations)
-				&&(torque<maxtorque)
-				&&(motorposition<too_far))
-		{
-			cpafr=FlowMasterInstance.pafr();
-			printf("iterations: %d position: %d pafr: %f\n",iterations,motorposition,cpafr);
-			if((flag>=1)||(cpafr<=local_tpafr))// this breaks out of the loop if the flag is high or if it has gone below it's target flow
-			{
-				//motor_instance.go_to(maxspeed,maxacc,NearPoint); // not desired for internal use
-				Sleep(time_for_stabilization); // I sleep for a second time because the flow may change as the motor backs off
-				cpafr=FlowMasterInstance.pafr();
-				//flowmaster_instance.lockdown(); // not desired for internal use
-				return (cpafr); // this returns the achieved flowrate, the calling function must decide if this flow is acceptable
-			}
-			if(cpafr<=(local_tpafr*(1+tferror))) // this breaks out of the loop if the flow is low enough to warrant it
-				flag++;
-			//torque=motor_instance.pseudotorque();     // this line is not useful
-			cep=position_assosiated_with_pafr(cpafr);
-			motorposition=MotorInstance.Position();
-			MotorInstance.GoTo(maxspeed,maxacc,(motorposition+fract2move*(tep-cep)));
-			Sleep(time_for_stabilization);
-			iterations++;
-		}
-	if(!(iterations<maxiterations))
-		printf("error: too many iterations,\n this program can handle an infinite number of iterations but the fact that there have been %d iterations without the desired flow rate being reached indicates something else is wrong\n",maxiterations);
-	if(!(MotorInstance.Position()<too_far))
-		printf("error: program stopped motor because it went too far\n");
-	if(!(MotorInstance.PseudoTorque()<maxtorque))
-		printf("caliberation stopped due to excess torque\n");
-	return(-2.0);
-}
-float algorithm_with_bounce_protection(float local_tpafr)
-{
-	float rpafr; // the returned pressure adjusted flow rate
-	rpafr=algorithm_without_bounce_protection_for_internal_use(local_tpafr-max_bounce_expected);// this tells the simpler algorithum to get close to the desired answer
-	if(rpafr==-2) // if "algorithm_without_bounce_protection" ends badly then this algorithum should do nothing but pass the bad result to the caller
-	{
-		FlowMasterInstance.LockDown(); // this closes the valves to make it safe for the user to open the jig
-		return(rpafr);
-	}
-	if (rpafr<=(local_tpafr*(1+tferror))) // if the flow is lower then the upper bound allowed then nothing more should be done
-	{
-		FlowMasterInstance.LockDown(); // this closes the valves to make it safe for the user to open the jig
-		return (rpafr);
-	}
-	printf("second stage started\n");
-	float cpafr=0; // current pressure ajusted flow rate
-	int tep=0, cep=0; // target equivelent position, current equivelent position
-	int iterations=0; // this just checks for the thing looping forever
-	int torque=0;
-	MotorInstance.GoTo(maxspeed,maxacc,SafePoint);
-	tep=position_assosiated_with_pafr(local_tpafr);
-	while((iterations<maxiterations)
-				&&(torque<maxtorque)
-				&&(MotorInstance.Position()<too_far))
-		{
-			MotorInstance.GoTo(maxspeed,maxacc,(MotorInstance.Position()-dist_to_back_off)); // this backs the motor off so I can get a reading without bounce
-			cpafr=FlowMasterInstance.pafr();
-			printf("iterations: %d position: %d pafr: %f\n",iterations,MotorInstance.Position(),cpafr);
-			if(cpafr<=(local_tpafr*(1+tferror))) // this breaks out of the loop if the flow is low enough to warrant it
-			{
-				MotorInstance.GoTo(maxspeed,maxacc,NearPoint);
-				FlowMasterInstance.LockDown(); // this closes the valves to make it safe for the user to open the jig
-				return (cpafr); // this returns the achieved flowrate, the calling function must decide if this flow is acceptable
-			}
-			else // this does another iteration of the setting process
-			{
-				cep=position_assosiated_with_pafr(cpafr);
-				//torque=motor_instance.pseudotorque();     // this line is not useful as the torque measurement is broken
-				MotorInstance.GoTo(maxspeed,maxacc,(MotorInstance.Position()+dist_to_back_off));// this moves the motor back to where it was
-				MotorInstance.GoTo(maxspeed/3,maxacc,(MotorInstance.Position()+fract2move*(tep-cep))); // I do this as two seperate moves so that the motor will be going slower for the fine movement at the end
-				Sleep(time_for_stabilization);
-				iterations++;
-			}
-		}
-	if(!(iterations<maxiterations))
-		printf("error: too many iterations,\n this program can handle an infinite number of iterations but the fact that there have been %d iterations without the desired flow rate being reached indicates something else is wrong\n",maxiterations);
-	if(!(MotorInstance.Position()<too_far))
-		printf("error: program stopped motor because it went too far\n");
-	if(!(MotorInstance.PseudoTorque()<maxtorque))
-		printf("caliberation stopped due to excess torque\n");
-	FlowMasterInstance.LockDown(); // this closes the valves to make it safe for the user to open the jig
-	MotorInstance.GoTo(MaxSpeed,MaxAcc,NearPoint); // NearPoint= near point to origin
-	return(-2.0);
-}
-*/
 int HandleResult(float rpafr, float LocalTpafr)
 {
-	if (rpafr==-2.0)
-	{
+	if (rpafr==-2.0){
 		// this the code for do nothing, things have been handled in the "perform" function and I decided not to put the code here
 		// this should also be unreachable through experemental readings unless the flowmeters are backwards
 		return 0;
 	}
-	if((((1-Settings.tfError)*LocalTpafr)<=rpafr)&&(rpafr<=((1+Settings.tfError)*LocalTpafr)))
-	{
+	if((((1-Settings.tfError)*LocalTpafr)<=rpafr)&&(rpafr<=((1+Settings.tfError)*LocalTpafr))){
 		printf("success: pressure adjusted flow rate=%f\n",rpafr);
 		return 0;
-	}
-	else if(!(((1-Settings.tfError)*LocalTpafr)<=rpafr))
-	{
+	}else if(!(((1-Settings.tfError)*LocalTpafr)<=rpafr)){
 		printf("failure: set flow too small, pressure adjusted flow rate=%f SLPM per bar\n",rpafr);
 		return 0;
-	}
-	else if (!(rpafr<=((1+Settings.tfError)*LocalTpafr)))
-	{
+	}else if (!(rpafr<=((1+Settings.tfError)*LocalTpafr))){
 		printf("failure: set flow too large, pressure adjusted flow rate=%f SLPM per bar\n",rpafr);
 		return 0;
-	}
-	else
-	{
+	}else{
 		printf("obscure error in 'handle result', call a programmer\n");
 		return 1;
 	}
