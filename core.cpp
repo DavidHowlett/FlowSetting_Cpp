@@ -133,7 +133,7 @@ int CreateCaliberationData()
 	}
 	MotorInstance.GoTo(Settings.MaxSpeed,Settings.MaxAcc,Settings.SafePoint);
 	float pafr=FlowMasterInstance.pafr();
-	for(PositionInArray=1;(	pafr>0.001)
+	for(PositionInArray=1;(	pafr>0.0001)
 							&&(Torque<Settings.MaxTorque)
 							&&(PositionInArray<=(MaxTableSize-1))
 							&&(MotorPosition<Settings.TooFar);PositionInArray++){   // this while sets the point of cut off after which caliberation ends
@@ -146,10 +146,10 @@ int CreateCaliberationData()
 				,CalMotorPositionTable[PositionInArray],Torque,FlowMasterInstance.MassFlow(),CalPafrTable[PositionInArray]);
 		if (pafr<0.5)
 			CurrentAmountToAdd=Settings.AmountToAdd/5;
-		//if (pafr<0.1)
-		//	CurrentAmountToAdd=Settings.AmountToAdd/20;
+		if (pafr<0.02)
+			CurrentAmountToAdd=Settings.AmountToAdd/20;
 	}
-	if(!(pafr>0.001))
+	if(!(pafr>0.0001))
 		printf("caliberation stopped because low flow was reached\n");
 	if(!(MotorInstance.PseudoTorque()<Settings.MaxTorque))
 		printf("caliberation stopped due to excess torque\n");
@@ -167,7 +167,7 @@ int CreateCaliberationData()
 	if( pFile==NULL)
 		printf("error: could not access calibration file");
 	else
-		for(PositionInArray=0; PositionInArray<=(MaxTableSize-1); PositionInArray++)   // the data terminates with 987654321 0, the motor will never go that far
+		for(PositionInArray=0; PositionInArray<=(MaxTableSize-1); PositionInArray++)
 			fprintf (pFile, "%d\t%f\n", CalMotorPositionTable[PositionInArray], CalPafrTable[PositionInArray]);
 	FlowMasterInstance.LockDown();
 	MotorInstance.GoTo(Settings.MaxSpeed,Settings.MaxAcc,Settings.NearPoint); // NearPoint= near point to origin
