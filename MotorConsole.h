@@ -1,6 +1,6 @@
 #include <System.hpp>
-#ifndef MotorH
-#define MotorH
+#ifndef MotorConsoleH
+#define MotorConsoleH
 /*
 the motor will keep track internaly of it's position,
 when motor posistion is needed by a higher program it should be requested.
@@ -11,7 +11,7 @@ class Motor
 {
 	public:
 		Motor(void);
-		int Setup(int);                 // opens the motor port, should only be called on startup
+		int Setup(int port);                 // opens the motor port, should only be called on startup
 		int GoTo(int,int,int);         // inputs are speed, accseleration and position. This tells the motor to go to the position specified, also updates the object's internal position monitor
 		int SetOrigin(void);     		// this reverses the motor until it hits a mechanical stopper, then it sets the 0 position to be the stopper
 		int FixMotorFreeState(void); // this sends the "(" command causeing the motor to reattempt the prevous command

@@ -1,5 +1,5 @@
-#ifndef FlowSetterSettingsH
-#define FlowSetterSettingsH
+#ifndef FlowSetterSettingsConsoleH
+#define FlowSetterSettingsConsoleH
 #include <stdio.h>
 #define MAXFLOWWMETERS 5 // this is the maximum number of flowmeters that this program can have
 class FlowSetterSettings

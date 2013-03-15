@@ -1,4 +1,4 @@
-#include "Weederio.h"
+#include "WeederioConsole.h"
 #include <System.hpp>
 #include <cassert>
 #include <iostream.h>

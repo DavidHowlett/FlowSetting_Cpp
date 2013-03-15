@@ -1,5 +1,5 @@
-#ifndef WeederioH
-#define WeederioH
+#ifndef WeederioConsoleH
+#define WeederioConsoleH
 #include <System.hpp>
 //---------------------------------------------------------------------------
 class Weederio

@@ -75,16 +75,16 @@
 				<DependentOn>DumbStringList.h</DependentOn>
 				<BuildOrder>5</BuildOrder>
 			</CppCompile>
-			<CppCompile Include="FlowMaster.cpp">
-				<DependentOn>FlowMaster.h</DependentOn>
+			<CppCompile Include="FlowMasterConsole.cpp">
+				<DependentOn>FlowMasterConsole.h</DependentOn>
 				<BuildOrder>9</BuildOrder>
 			</CppCompile>
 			<CppCompile Include="FlowMeter.cpp">
 				<DependentOn>FlowMeter.h</DependentOn>
 				<BuildOrder>6</BuildOrder>
 			</CppCompile>
-			<CppCompile Include="FlowSetterSettings.cpp">
-				<DependentOn>FlowSetterSettings.h</DependentOn>
+			<CppCompile Include="FlowSetterSettingsConsole.cpp">
+				<DependentOn>FlowSetterSettingsConsole.h</DependentOn>
 				<BuildOrder>10</BuildOrder>
 			</CppCompile>
 			<CppCompile Include="Functions.cpp">
@@ -94,16 +94,16 @@
 			<None Include="Hidden.h">
 				<BuildOrder>8</BuildOrder>
 			</None>
-			<CppCompile Include="Motor.cpp">
-				<DependentOn>Motor.h</DependentOn>
+			<CppCompile Include="MotorConsole.cpp">
+				<DependentOn>MotorConsole.h</DependentOn>
 				<BuildOrder>9</BuildOrder>
 			</CppCompile>
 			<CppCompile Include="RS232Primitive.cpp">
 				<DependentOn>RS232Primitive.h</DependentOn>
 				<BuildOrder>8</BuildOrder>
 			</CppCompile>
-			<CppCompile Include="Weederio.cpp">
-				<DependentOn>Weederio.h</DependentOn>
+			<CppCompile Include="WeederioConsole.cpp">
+				<DependentOn>WeederioConsole.h</DependentOn>
 				<BuildOrder>9</BuildOrder>
 			</CppCompile>
 			<BuildConfiguration Include="Release">

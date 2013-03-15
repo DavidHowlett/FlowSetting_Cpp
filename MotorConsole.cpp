@@ -1,4 +1,4 @@
-#include "Motor.h"
+#include "MotorConsole.h"
 #include <iostream.h>
 Motor::Motor()
 {

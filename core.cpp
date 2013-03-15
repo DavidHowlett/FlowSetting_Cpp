@@ -5,9 +5,9 @@
 #include <stdio.h>
 #include <string>
 // My Header Files ----------------------------------------------------------
-#include "Motor.h"
-#include "FlowMaster.h"
-#include "FlowSetterSettings.h"
+#include "MotorConsole.h"
+#include "FlowMasterConsole.h"
+#include "FlowSetterSettingsConsole.h"
 #include "Hidden.h"       // this contains documentation
 // My Classes ---------------------------------------------------------------
 Motor MotorInstance;

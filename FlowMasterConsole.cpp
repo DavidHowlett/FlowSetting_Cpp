@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <iostream.h>
-#include "Flowmaster.h"
+#include "FlowMasterConsole.h"
 #include "AlicatFlowmeter.h"
-#include "FlowSetterSettings.h"
+//#include "FlowSetterSettingsConsole.h"
 FlowMaster::FlowMaster()
 {
 	fmInUse=0;

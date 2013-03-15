@@ -1,7 +1,7 @@
 // Standard Header Files ---------------------------------------------------
 #include <cassert>
 // My Header Files ---------------------------------------------------------
-#include "FlowSetterSettings.h"
+#include "FlowSetterSettingsConsole.h"
 //---------------------------------------------------------------------------
 FlowSetterSettings::ReadFile(){
 	FilePointer = fopen ("settings.txt","r");

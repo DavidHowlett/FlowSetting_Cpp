@@ -1,8 +1,8 @@
-#ifndef FlowmasterH
-#define FlowmasterH
-#include "Weederio.h"
+#ifndef FlowMasterConsoleH
+#define FlowMasterConsoleH
+#include "WeederioConsole.h"
 class AlicatFlowmeter;
-#include "FlowSetterSettings.h"
+#include "FlowSetterSettingsConsole.h"
 
 class FlowMaster
 {
