@@ -13,7 +13,7 @@
 16 		number of the calibration file to be used 
 16 		number of the most recently written calibration file 
 800.000000 	time for stabilization
-0.500000 	fraction to final position to move on each iteration 
+0.400000 	fraction to final position to move on each iteration 
 3000000.000000 	maximum torque
 1 		number of the algorithm used for setting flows
 3000 		amount to move on each iteration of calibration data generation

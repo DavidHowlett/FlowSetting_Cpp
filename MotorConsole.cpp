@@ -116,7 +116,7 @@ int Motor::PseudoTorque()// note this does not return torque but a related quant
 int Motor::WaitForResponse()
 {
 	DWORD BytesRead;
-	for(int i=0;i<=5000;i++)
+	for(int i=0;i<=30000;i++)
 	{
 	ReadFile(	MotorPortHandle,	//HANDLE        hFile,
 				TmpBuffer,      	//LPVOID        lpBuffer,
@@ -127,7 +127,7 @@ int Motor::WaitForResponse()
 			return 0;
 		Sleep(1);
 	}
-	printf("error: expected motor signal not recived after 5 seconds\n");
+	printf("error: expected motor signal not recived after 30 seconds\n");
 	return 1;
 }
 int Motor::WriteToMotor(char* to_send)
